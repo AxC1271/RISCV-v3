@@ -3,6 +3,12 @@ module immediate_generator (
     output logic[31:0] imm
 );
 
+    /*
+    1. All of my RTL logic lives here
+    2. All combinational/registered logic are defined here
+    3. Use these during testbenches/simulations 
+    */
+
     localparam OPCODE_R      = 7'b0110011;
     localparam OPCODE_I_LOAD = 7'b0000011;
     localparam OPCODE_I_REG  = 7'b0010011;
@@ -54,4 +60,11 @@ module immediate_generator (
             default: imm = 32'b0;
         endcase
     end
+
+    /*
+    1. My formal properties live here
+    2. All asserts, assumes, and covers are defined here
+    3. Use these during SymbiYosys for formal verification
+    */
+    
 endmodule

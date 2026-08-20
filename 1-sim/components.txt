@@ -1,0 +1,3 @@
+../0-rtl/alu.sv
+../0-rtl/control_unit.sv
+../0-rtl/program_counter.sv
