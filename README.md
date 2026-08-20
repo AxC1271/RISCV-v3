@@ -34,6 +34,33 @@ This project explores all three, while documenting the verification and design c
 
 ## Branch Predictors
 
+Since we are now fetching 2 instructions instead of one, a branch prediction becomes twice as expensive compared to a one-way pipeline. Instead of squashing two instructions on a mispredict, we have to squash `4`. That's why for this project, I want to explore three different branch predictors and quantitatively measure their accuracy and IPC impact.
+
+### Always Not Taken Predictor
+
+This is the default option and was the predictor chosen for the preceding RISC-V v2. The processor treats the branch instruction as any other instruction and speculatively fetches the two consecutive instructions (curr_pc + 4 and curr_pc + 8), thus believing the branch isn't taken. Sometimes, the branch isn't taken, and we're able to continue executing as expected. However, on a mispredict, the `IF` and `ID` stages have to be flushed (since we are on the wrong path), and we have to incur a 2-cycle penalty. On a code block like:
+
+```s
+main:
+    addi x1, x0, 0
+    addi x2, x0, 100
+    blt  x1, x2, LOOP
+
+LOOP:
+    addi x1, x1, 1
+    bne  x1, x2, LOOP 
+```
+
+Here you would incur the 2-cycle penalty on **EVERY** single iteration up until x1 is 100. This is a really simple example, but it goes to show that there are certain workloads that can be extremely hostile to this branch predictor scheme.
+
+**Verdict:** Simple, zero area cost. But loop-heavy and branch-intensive workloads are hostile to this approach. No prediction at all on Fibonacci achieves only 0.64 IPC; this predictor is why.
+
+### 2-bit Saturating Counter
+
+### Gshare Branch Predictor 
+
+---
+
 ## Performance: IPC Comparison
 
 ---
