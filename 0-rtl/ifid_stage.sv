@@ -5,16 +5,16 @@ module ifid_stage (
     input  logic flush,
     input  logic[31:0] if1_pc,
     input  logic[31:0] if1_instr,
-    input  logic        if1_valid,
+    input  logic       if1_valid,
     input  logic[31:0] if2_pc,
     input  logic[31:0] if2_instr,
-    input  logic        if2_valid,
+    input  logic       if2_valid,
     output logic[31:0] id1_pc,
     output logic[31:0] id1_instr,
-    output logic        id1_valid,
+    output logic       id1_valid,
     output logic[31:0] id2_pc,
     output logic[31:0] id2_instr,
-    output logic        id2_valid
+    output logic       id2_valid
 );
 
     /*
