@@ -54,13 +54,107 @@ module core_riscv_superscalar (
     // 2nd stage: ID
 
     idex_stage idex (
-        .clk(clk)
+        .clk(clk),
+        .rst_n(rst_n),
+        .stall(),
+        .flush(),
+        .issue_0(),
+        .issue_1(),
+
+        .id1_pc(),
+        .id1_instr(),
+        .id1_rs1_data(),
+        .id1_rs2_data(),
+        .id1_imm(),
+        .id1_rs1(),
+        .id1_rs2(),
+        .id1_rd(),
+        .id1_alu_opcode(),
+        .id1_op_a_sel(),
+        .id1_alusrc(),
+        .id1_memread(),
+        .id1_memwrite(),
+        .id1_memtoreg(),
+        .id1_regwrite(),
+        .id1_branch(),
+        .id1_jump(),
+        .id1_jalr(),
+        .id1_ebreak(),
+        .id1_valid(),
+
+        .id2_pc(),
+        .id2_instr(),
+        .id2_rs1_data(),
+        .id2_rs2_data(),
+        .id2_imm(),
+        .id2_rs1(),
+        .id2_rs2(),
+        .id2_rd(),
+        .id2_alu_opcode(),
+        .id2_op_a_sel(),
+        .id2_alusrc(),
+        .id2_memread(),
+        .id2_memwrite(),
+        .id2_memtoreg(),
+        .id2_regwrite(),
+        .id2_branch(),
+        .id2_jump(),
+        .id2_jalr(),
+        .id2_ebreak(),
+        .id2_valid(),
+
+
+        .ex1_pc(),
+        .ex1_instr(),
+        .ex1_rs1_data(),
+        .ex1_rs2_data(),
+        .ex1_imm(),
+        .ex1_rs1(),
+        .ex1_rs2(),
+        .ex1_rd(),
+        .ex1_alu_opcode(),
+        .ex1_op_a_sel(),
+        .ex1_alusrc(),
+        .ex1_memread(),
+        .ex1_memwrite(),
+        .ex1_memtoreg(),
+        .ex1_regwrite(),
+        .ex1_branch(),
+        .ex1_jump(),
+        .ex1_jalr(),
+        .ex1_ebreak(),
+        .ex1_valid(),
+
+        .ex2_pc(),
+        .ex2_instr(),
+        .ex2_rs1_data(),
+        .ex2_rs2_data(),
+        .ex2_imm(),
+        .ex2_rs1(),
+        .ex2_rs2(),
+        .ex2_rd(),
+        .ex2_alu_opcode(),
+        .ex2_op_a_sel(),
+        .ex2_alusrc(),
+        .ex2_memread(),
+        .ex2_memwrite(),
+        .ex2_memtoreg(),
+        .ex2_regwrite(),
+        .ex2_branch(),
+        .ex2_jump(),
+        .ex2_jalr(),
+        .ex2_ebreak(),
+        .ex2_valid()
     );
 
     // 3rd stage: EX
 
     exmem_stage exmem (
+        .clk(clk),
+        .rst_n(rst_n),
+        .stall(),
 
+        
     );
 
     // 4th stage: MEM
