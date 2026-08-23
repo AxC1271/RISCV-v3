@@ -3,6 +3,8 @@ module idex_stage (
     input  logic rst_n,
     input  logic stall,
     input  logic flush,
+    input  logic issue_0,
+    input  logic issue_1,
 
     input  logic[31:0] id1_pc,
     input  logic[31:0] id1_instr,
@@ -94,6 +96,8 @@ module idex_stage (
     2. All combinational/registered logic are defined here
     3. Use these during testbenches/simulations 
     */
+
+    
 
     /*
     1. My formal properties live here
