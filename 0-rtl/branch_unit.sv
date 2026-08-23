@@ -13,6 +13,12 @@ module branch_unit (
     output logic [31:0] branch_target
 );
 
+    /*
+    1. All of my RTL logic lives here
+    2. All combinational/registered logic are defined here
+    3. Use these during testbenches/simulations 
+    */
+
     logic condition_met;
     
     // compute branch condition
@@ -30,5 +36,11 @@ module branch_unit (
     
     assign branch_taken = branch && condition_met;
     assign branch_target = pc + imm;
+
+    /*
+    1. My formal properties live here
+    2. All asserts, assumes, and covers are defined here
+    3. Use these during SymbiYosys for formal verification
+    */
 
 endmodule
