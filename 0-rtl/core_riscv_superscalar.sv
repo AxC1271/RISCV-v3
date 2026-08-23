@@ -1,4 +1,4 @@
-module core_riscv (
+module core_riscv_superscalar (
     input  logic clk,
     input  logic rst_n,
 );

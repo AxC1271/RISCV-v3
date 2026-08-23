@@ -1,6 +1,12 @@
 module gshare_predictor (
-    input  logic clk,
-    input  logic rst_n,
+    input  logic[31:0] pc,
+    input  logic[9:0] global_history,
+
+    output logic prediction,
+
+    input  logic[31:0] branch_pc,
+    input  logic       actual_taken,
+    output logic[9:0]  global_history_next
 );
 
     /*
