@@ -17,7 +17,15 @@ module dispatch_unit (
     3. Use these during testbenches/simulations 
     */
 
-    
+    assign issue_0 = !load_use;
+    assign issue_1 = !(
+        load_use        || 
+        intra_group_raw ||
+        intra_group_waw ||
+        branch_depends  ||
+        two_branches
+    );
+    assign stall_pipeline = load_use;
 
     /*
     1. My formal properties live here
