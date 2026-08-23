@@ -97,7 +97,60 @@ module idex_stage (
     3. Use these during testbenches/simulations 
     */
 
-    
+    always_ff @(posedge clk) begin
+        if (!rst_n || flush) begin
+            // if it's not valid it just
+            // passes through the pipeline
+            ex1_valid <= 1'b0;
+            ex2_valid <= 1'b0;
+        end else if (stall) begin
+            // do nothing, all signals hold
+        end else begin
+            ex1_valid <= issue_0;
+            ex2_valid <= issue_1;
+            
+            // forward the rest of the signals
+            ex1_pc         <= id1_pc;
+            ex1_instr      <= id1_instr;
+            ex1_rs1_data   <= id1_rs1_data;
+            ex1_rs2_data   <= id1_rs2_data;
+            ex1_imm        <= id1_imm;
+            ex1_rs1        <= id1_rs1;
+            ex1_rs2        <= id1_rs2;
+            ex1_rd         <= id1_rd;
+            ex1_alu_opcode <= id1_alu_opcode;
+            ex1_op_a_sel   <= id1_op_a_sel;
+            ex1_alusrc     <= id1_alusrc;
+            ex1_memread    <= id1_memread;
+            ex1_memwrite   <= id1_memwrite;
+            ex1_memtoreg   <= id1_memtoreg;
+            ex1_regwrite   <= id1_regwrite;
+            ex1_branch     <= id1_branch;
+            ex1_jump       <= id1_jump;
+            ex1_jalr       <= id1_jalr;
+            ex1_ebreak     <= id1_ebreak;
+
+            ex2_pc         <= id2_pc;
+            ex2_instr      <= id2_instr;
+            ex2_rs1_data   <= id2_rs1_data;
+            ex2_rs2_data   <= id2_rs2_data;
+            ex2_imm        <= id2_imm;
+            ex2_rs1        <= id2_rs1;
+            ex2_rs2        <= id2_rs2;
+            ex2_rd         <= id2_rd;
+            ex2_alu_opcode <= id2_alu_opcode;
+            ex2_op_a_sel   <= id2_op_a_sel;
+            ex2_alusrc     <= id2_alusrc;
+            ex2_memread    <= id2_memread;
+            ex2_memwrite   <= id2_memwrite;
+            ex2_memtoreg   <= id2_memtoreg;
+            ex2_regwrite   <= id2_regwrite;
+            ex2_branch     <= id2_branch;
+            ex2_jump       <= id2_jump;
+            ex2_jalr       <= id2_jalr;
+            ex2_ebreak     <= id2_ebreak;
+        end
+    end
 
     /*
     1. My formal properties live here
