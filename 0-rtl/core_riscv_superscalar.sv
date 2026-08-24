@@ -31,7 +31,11 @@ module core_riscv_superscalar (
     3. Use these during testbenches/simulations 
     */
 
+    // program counter signals
     logic[31:0] pc_curr, pc_next;
+
+    // hazard unit flags
+    logic flush;
 
     program_counter pc (
         .clk     (clk),
@@ -77,8 +81,8 @@ module core_riscv_superscalar (
     ifid_stage ifid (
         .clk(clk),
         .rst_n(rst_n),
-        .stall(),
-        .flush(),
+        .stall(stall_pipeline),
+        .flush(flush),
 
         .if1_pc(pc_curr),
         .if1_instr(imem_rdata1),

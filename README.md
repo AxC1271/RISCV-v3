@@ -97,6 +97,8 @@ Here we have the typical RAW hazard, but it's embedded in the pair of instructio
 
 ## Formal Verification (SVA)
 
+There's two steps to verifying the correctness of this processor. First of all, I would be using directed testbenches to stress the core through different types of workloads
+
 ---
 
 ## Timing Analysis (Sky130 Post-Synth)
@@ -105,13 +107,59 @@ Here we have the typical RAW hazard, but it's embedded in the pair of instructio
 
 ## Repository Structure
 
+```
+/0-rtl/    - pure Verilog implementation of the processor
+/1-sim/    - testbenches for different workloads / IPC comparison
+/2-formal/ - SystemVerilog assertions + SymbiYosys scripts 
+/3-sta/    - static timing analysis with yosys/opensta/tcl scripts
+/4-images/ - visual illustrations to better explain certain concepts
+```
+
 ---
 
 ## Build & Simulate
 
 ### Compile
 
+Just like what I did with the v2, I will be using `Icarus Verilog` to simulate the processor. For reference, the scripts I'll be running are:
+
+```bash
+iverilog -g2012 -I ../0-rtl -o fib_sim tb_fib.sv ../0-rtl/core_riscv.sv ../0-rtl/alu.sv ...
+```
+
+Or what I did for this project to smooth the iteration process:
+
+```bash
+cat > files.txt << 'EOF'
+tb_fib.sv
+../0-rtl/core_riscv.sv
+../0-rtl/alu.sv
+../0-rtl/control_unit.sv
+... (all RTL files)
+EOF
+
+iverilog -g2012 -o fib_sim -c files.txt
+```
+
 ### Run
+
+To run the executable, just run the following:
+
+```bash
+vvp fib_sim
+```
+
+An example output could be:
+
+```
+[TB-FIB] Fibonacci(30) benchmark starting...
+[TB-FIB] EBREAK retired at T=195000
+
+========== IPC (Fibonacci) ==========
+cycles=14  retired=9  IPC=0.6429
+Result in x2: 0x00000005 (should be fib(30))
+tb_fib.sv:141: $finish called at 235000 (1ps)
+```
 
 ---
 
