@@ -1,21 +1,22 @@
 module core_riscv_superscalar (
-    input  logic clk,
-    input  logic rst_n,
-    input  logic cpu_enable,
+    input  logic        clk,
+    input  logic        rst_n,
+    input  logic        cpu_enable,
+    input  logic[1:0]   predictor_sel, // 00 for always NT, 01 for bimodal, 10 for gshare
 
-    output logic[31:0] imem_addr,   // fetch from current pc and pc + 4
-    output logic       imem_req,    
-    input  logic[31:0] imem_rdata1, // older instruction
-    input  logic[31:0] imem_rdata2, // younger instruction
-    input  logic       imem_ready,
+    output logic[31:0]  imem_addr,     // fetch from current pc and pc + 4
+    output logic        imem_req,    
+    input  logic[31:0]  imem_rdata1,   // older instruction
+    input  logic[31:0]  imem_rdata2,   // younger instruction
+    input  logic        imem_ready,
 
-    output logic[31:0] dmem_addr,
-    output logic[31:0] dmem_wdata,
-    output logic[3:0]  dmem_wstrb,
-    output logic       dmem_rd_en,
-    output logic       dmem_wr_en,
-    input  logic[31:0] dmem_rdata,
-    input  logic       dmem_ready,
+    output logic[31:0]  dmem_addr,
+    output logic[31:0]  dmem_wdata,
+    output logic[3:0]   dmem_wstrb,
+    output logic        dmem_rd_en,
+    output logic        dmem_wr_en,
+    input  logic[31:0]  dmem_rdata,
+    input  logic        dmem_ready,
 
     // debug / testbench visibility
     output logic [31:0] debug_pc,
@@ -41,16 +42,18 @@ module core_riscv_superscalar (
     );
 
     // here I want to try three different predictors
+    logic prediction_nt, prediction_bimodal, prediction_gshare;
+
     nt_predictor nt (
         .pc        (pc_curr),
-        .prediction()
+        .prediction(prediction_nt)
     );
 
     bimodal_predictor bimodal (
         .clk         (clk),
         .rst_n       (rst_n),
         .pc          (pc_curr),
-        .prediction  (),
+        .prediction  (prediction_bimodal),
         .branch_pc   (),
         .branch_taken()
     );
@@ -60,31 +63,36 @@ module core_riscv_superscalar (
         .rst_n              (rst_n),
         .pc                 (pc_curr),
         .global_history     (),
-        .prediction         (),
+        .prediction         (prediction_gshare),
         .branch_pc          (),
         .branch_taken       (),
         .global_history_next()
     );
 
     // 1st stage: IF
+    logic id1_pc, id2_pc;
+    logic id1_instr, id2_instr;
+    logic id1_valid, id2_valid;
 
     ifid_stage ifid (
         .clk(clk),
         .rst_n(rst_n),
         .stall(),
         .flush(),
-        .if1_pc(),
-        .if1_instr(),
+
+        .if1_pc(pc_curr),
+        .if1_instr(imem_rdata1),
         .if1_valid(),
-        .if2_pc(),
-        .if2_instr(),
+
+        .if2_pc(pc_curr + 4),
+        .if2_instr(imem_rdata2),
         .if2_valid(),
 
-        .id1_pc(),
-        .id1_instr(),
+        .id1_pc(id1_pc),
+        .id1_instr(id1_instr),
         .id1_valid(),
-        .id2_pc(),
-        .id2_instr(),
+        .id2_pc(id2_pc),
+        .id2_instr(id2_instr),
         .id2_valid()
     );
 
@@ -153,16 +161,19 @@ module core_riscv_superscalar (
     );
 
     // 2nd stage: ID
+    logic intra_group_raw, intra_group_waw;
+    logic load_use, branch_depends, two_branches;
+    logic issue_0, issue_1, stall_pipeline;
 
     dispatch_unit dispatch (
-        .intra_group_raw(),
-        .intra_group_waw(),
-        .load_use(),
-        .branch_depends(),
-        .two_branches(),
-        .issue_0(),
-        .issue_1(),
-        .stall_pipeline()
+        .intra_group_raw(intra_group_raw),
+        .intra_group_waw(intra_group_waw),
+        .load_use       (load_use),
+        .branch_depends (branch_depends),
+        .two_branches   (two_branches),
+        .issue_0        (issue_0),
+        .issue_1        (issue_1),
+        .stall_pipeline (stall_pipeline)
     );
 
     idex_stage idex (
@@ -260,6 +271,17 @@ module core_riscv_superscalar (
     );
 
     // 3rd stage: EX
+
+    branch_unit bu (
+        .rs1_data(),
+        .rs2_data(),
+        .branch(),
+        .funct3(),
+        .pc(),
+        .imm(),
+        .branch_taken(),
+        .branch_target()
+    );
 
     exmem_stage exmem (
         .clk(clk),
