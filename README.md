@@ -69,6 +69,24 @@ Here you would incur the 2-cycle penalty on **EVERY** single iteration up until 
 
 ### Challenge 1: Intra-Group Hazards
 
+Let's say you fetch two instructions. An intra-group hazard can either
+consist of a WAW or a RAW hazard. Let's say I fetched these two instructions
+at the same time:
+
+```s
+addi x1, x0, 10
+add  x1, x5, x6
+```
+
+You have a WAW hazard here, where both instructions write to the same register, x1. In program order, the most recent write would be the younger instruction so we should have that commit later. Therefore, we should always let the first (and older) instruction commit. So x1 = x0 + 10 would first commit before being overwritten by x1 = x5 + x6, which is intended behavior here.
+
+```s
+add x5, x1, x2
+mul x6, x5, x4
+```
+
+Here we have the typical RAW hazard, but it's embedded in the pair of instructions that we just fetched together at the same time. The `mul` instruction needs the result of x5 from the previous `add` instruction, so it needs to stall. Same deal, we still issue the first instruction and forward the result of that to the second instruction. Notice the RAW doesn't really apply in the reverse, since the `add` instruction wouldn't see any new committed values from the younger `mul` instruction.
+
 ### Challenge 2: Register File Complexity
 
 ### Challenge 3: Data Forwarding Paths
