@@ -57,7 +57,11 @@ Here you would incur the 2-cycle penalty on **EVERY** single iteration up until 
 
 ### 2-bit Saturating Counter
 
+
+
 ### Gshare Branch Predictor 
+
+
 
 ---
 
