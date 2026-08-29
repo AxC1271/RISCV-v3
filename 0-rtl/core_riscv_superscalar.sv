@@ -86,18 +86,18 @@ module core_riscv_superscalar (
 
         .if1_pc(pc_curr),
         .if1_instr(imem_rdata1),
-        .if1_valid(),
+        .if1_valid(1'b1), // always pass in 1'b1 unless squashed
 
         .if2_pc(pc_curr + 4),
         .if2_instr(imem_rdata2),
-        .if2_valid(),
+        .if2_valid(1'b1), // always pass in 1'b1 unless squashed
 
         .id1_pc(id1_pc),
         .id1_instr(id1_instr),
-        .id1_valid(),
+        .id1_valid(id1_valid),
         .id2_pc(id2_pc),
         .id2_instr(id2_instr),
-        .id2_valid()
+        .id2_valid(id2_valid)
     );
 
     register_file registers (
@@ -121,7 +121,7 @@ module core_riscv_superscalar (
     );
 
     control_unit cu1 (
-        .instruction(),
+        .instruction(id1_instr),
         .alu_opcode(),
         .op_a_sel(),
         .alusrc(),
@@ -138,7 +138,7 @@ module core_riscv_superscalar (
     );
 
     control_unit cu2 (
-        .instruction(),
+        .instruction(id2_instr),
         .alu_opcode(),
         .op_a_sel(),
         .alusrc(),
@@ -154,14 +154,16 @@ module core_riscv_superscalar (
         .ebreak()
     );
 
+    logic [31:0] id1_imm, id2_imm;
+
     immediate_generator imm1 (
-        .instr(),
-        .imm()
+        .instr(id1_instr),
+        .imm(id1_imm)
     );
 
     immediate_generator imm2 (
-        .instr(),
-        .imm()
+        .instr(id2_instr),
+        .imm(id2_imm)
     );
 
     // 2nd stage: ID
