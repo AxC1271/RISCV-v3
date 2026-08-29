@@ -100,58 +100,74 @@ module core_riscv_superscalar (
         .id2_valid(id2_valid)
     );
 
+    logic[31:0] id_rd1_data1, id_rd1_data2;
+    logic[31:0] id_rd2_data1, id_rd2_data2;
+
     register_file registers (
         .clk(clk),
         .rst_n(rst_n),
-        .rd1_addr1(),
-        .rd1_addr2(),
-        .rd2_addr1(),
-        .rd2_addr2(),
-        .rd1_data1(),
-        .rd1_data2(),
-        .rd2_data1(),
-        .rd2_data2(),
+        .rd1_addr1(id1_instr[19:15]),
+        .rd1_addr2(id1_instr[24:20]),
+        .rd2_addr1(id2_instr[19:15]),
+        .rd2_addr2(id2_instr[24:20]),
+        .rd1_data1(id_rd1_data1),
+        .rd1_data2(id_rd1_data2),
+        .rd2_data1(id_rd2_data1),
+        .rd2_data2(id_rd2_data2),
 
-        .wr1_addr(),
-        .wr2_addr(),
+        .wr1_addr(id1_instr[11:7]),
+        .wr2_addr(id2_instr[11:7]),
         .wr1_data(),
         .wr2_data(),
         .reg1_write(),
         .reg2_write()
     );
 
+    logic[3:0] id1_alu_opcode, id2_alu_opcode;
+    logic[1:0] id1_op_a_sel, id2_op_a_sel;
+    logic id1_alusrc, id2_alusrc;
+    logic id1_regwrite, id2_regwrite;
+    logic id1_memread, id2_memread;
+    logic id1_memwrite, id2_memwrite;
+    logic id1_branch, id2_branch;
+    logic id1_memtoreg, id2_memtoreg;
+    logic id1_jump, id2_jump;
+    logic id1_jalr, id2_jalr;
+    logic id1_uses_rs1, id2_uses_rs2; 
+    logic id1_ebreak, id2_ebreak;
+
     control_unit cu1 (
         .instruction(id1_instr),
-        .alu_opcode(),
-        .op_a_sel(),
-        .alusrc(),
-        .regwrite(),
-        .memread(),
-        .memwrite(),
-        .branch(),
-        .memtoreg(),
-        .jump(),
-        .jalr(),
-        .uses_rs1(),
-        .uses_rs2(),
-        .ebreak()
+        .alu_opcode(id1_alu_opcode),
+        .op_a_sel(id1_op_a_sel),
+        .alusrc(id1_alusrc),
+        .regwrite(id1_regwrite),
+        .memread(id1_memread),
+        .memwrite(id1_memwrite),
+        .branch(id1_branch),
+        .memtoreg(id1_memtoreg),
+        .jump(id1_jump),
+        .jalr(id1_jalr),
+        .uses_rs1(id1_uses_rs1),
+        .uses_rs2(id1_uses_rs2),
+        .ebreak(id1_ebreak)
     );
 
     control_unit cu2 (
         .instruction(id2_instr),
-        .alu_opcode(),
-        .op_a_sel(),
-        .alusrc(),
-        .regwrite(),
-        .memread(),
-        .memwrite(),
-        .branch(),
-        .memtoreg(),
-        .jump(),
-        .jalr(),
-        .uses_rs1(),
-        .uses_rs2(),
-        .ebreak()
+        .alu_opcode(id2_alu_opcode),
+        .op_a_sel(id2_op_a_sel),
+        .alusrc(id2_alusrc),
+        .regwrite(id2_regwrite),
+        .memread(id2_memread),
+        .memwrite(id2_memwrite),
+        .branch(id2_branch),
+        .memtoreg(id2_memtoreg),
+        .jump(id2_jump),
+        .jalr(id2_jalr),
+        .uses_rs1(id2_uses_rs1),
+        .uses_rs2(id2_uses_rs2),
+        .ebreak(id2_ebreak)
     );
 
     logic [31:0] id1_imm, id2_imm;
@@ -187,11 +203,11 @@ module core_riscv_superscalar (
         .rst_n(rst_n),
         .stall(),
         .flush(),
-        .issue_0(),
-        .issue_1(),
+        .issue_0(issue_0),
+        .issue_1(issue_1),
 
-        .id1_pc(),
-        .id1_instr(),
+        .id1_pc(id1_pc),
+        .id1_instr(id1_instr),
         .id1_rs1_data(),
         .id1_rs2_data(),
         .id1_imm(),
@@ -211,8 +227,8 @@ module core_riscv_superscalar (
         .id1_ebreak(),
         .id1_valid(),
 
-        .id2_pc(),
-        .id2_instr(),
+        .id2_pc(id2_pc),
+        .id2_instr(id2_instr),
         .id2_rs1_data(),
         .id2_rs2_data(),
         .id2_imm(),
