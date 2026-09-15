@@ -14,4 +14,4 @@
 ../0-rtl/nt_predictor.sv
 ../0-rtl/program_counter.sv
 ../0-rtl/register_file.sv
-tb_core.sv
+tb_fib.sv

@@ -7,7 +7,8 @@ module tb_bubblesort();
     localparam BASE        = 32'h0000_0000;
 
     logic clk, rst_n, cpu_enable;
-    logic [31:0] imem_addr, imem_rdata;
+    logic [1:0] predictor_sel;
+    logic [31:0] imem_addr, imem_rdata1, imem_rdata2;
     logic imem_req, imem_ready;
     logic [31:0] dmem_addr, dmem_wdata, dmem_rdata;
     logic [3:0] dmem_wstrb;
@@ -19,9 +20,10 @@ module tb_bubblesort();
         .clk(clk), 
         .rst_n(rst_n), 
         .cpu_enable(cpu_enable),
+        .predictor_sel(predictor_sel),
         .imem_addr(imem_addr), 
         .imem_req(imem_req), 
-        .imem_rdata(imem_rdata), 
+        .imem_rdata1(imem_rdata1), .imem_rdata2(imem_rdata2), 
         .imem_ready(imem_ready),
         .dmem_addr(dmem_addr), 
         .dmem_wdata(dmem_wdata), 
@@ -42,12 +44,16 @@ module tb_bubblesort();
     end
 
     logic [31:0] imem [0:IMEM_WORDS-1];
-    logic [31:0] imem_index;
+    logic [31:0] imem_index, imem_index2;
     assign imem_index = (imem_addr - BASE) >> 2;
+    assign imem_index2 = imem_index + 1;
 
     int MEM_LATENCY;
+    int PREDICTOR;
     initial begin
         if (!$value$plusargs("lat=%d", MEM_LATENCY)) MEM_LATENCY = 1;
+        if (!$value$plusargs("pred=%d", PREDICTOR)) PREDICTOR = 2;
+        predictor_sel = PREDICTOR[1:0];
         for (int i = 0; i < IMEM_WORDS; i++)
             imem[i] = 32'h00000013;
 
@@ -78,9 +84,10 @@ module tb_bubblesort();
         imem['h048 >> 2] = 32'h00100073; // ebreak
     end
 
-    assign imem_rdata = (imem_index < IMEM_WORDS) ? imem[imem_index[$clog2(IMEM_WORDS)-1:0]] : 32'h00000013;
+    assign imem_rdata1 = (imem_index < IMEM_WORDS) ? imem[imem_index[$clog2(IMEM_WORDS)-1:0]] : 32'h00000013;
+    assign imem_rdata2 = (imem_index2 < IMEM_WORDS) ? imem[imem_index2[$clog2(IMEM_WORDS)-1:0]] : 32'h00000013;
 
-    int imem_cnt;
+    int imem_cnt = 0;
     assign imem_ready = imem_req && (imem_cnt == MEM_LATENCY-1);
     always_ff @(posedge clk) begin
         if (!imem_req) imem_cnt <= 0;
@@ -92,7 +99,7 @@ module tb_bubblesort();
     initial for (int i = 0; i < DMEM_WORDS; i++) dmem[i] = 32'h0;
     assign dmem_rdata = dmem[dmem_addr[$clog2(DMEM_WORDS)+1:2]];
 
-    int dmem_cnt;
+    int dmem_cnt = 0;
     logic [31:0] dmem_idx;
     assign dmem_idx   = dmem_addr[$clog2(DMEM_WORDS)+1:2];
     assign dmem_ready = (dmem_rd_en || dmem_wr_en) && (dmem_cnt == MEM_LATENCY-1);
@@ -109,20 +116,35 @@ module tb_bubblesort();
     end
 
     function automatic [31:0] read_reg(input int unsigned n);
-        read_reg = dut.rf.mem[n];
+        read_reg = dut.registers.mem[n];
     endfunction
 
+    // IPC instrumentation
     longint cycle_count, retire_count;
+    longint branch_count, mispredict_count;
+    logic halted_seen;
+
     always_ff @(posedge clk) begin
         if (!rst_n) begin
-            cycle_count <= 0;
-            retire_count <= 0;
-        end else begin
-            if (cpu_enable && !debug_halted) begin
-                cycle_count <= cycle_count + 1;
-                if (dut.wb_valid && !dut.memwb_stall)
-                    retire_count <= retire_count + 1;
-            end
+            cycle_count      <= 0;
+            retire_count     <= 0;
+            branch_count     <= 0;
+            mispredict_count <= 0;
+            halted_seen      <= 1'b0;
+        end else if (cpu_enable && !halted_seen) begin
+            cycle_count <= cycle_count + 1;
+            retire_count <= retire_count
+                          + ((dut.wb1_valid && !dut.wb1_ebreak) ? 1 : 0)
+                          + ((dut.wb2_valid && !dut.wb2_ebreak) ? 1 : 0);
+
+            if (dut.branch_update_valid)
+                branch_count <= branch_count + 1;
+
+            if (dut.mispredict)
+                mispredict_count <= mispredict_count + 1;
+
+            if (debug_halted)
+                halted_seen <= 1'b1;
         end
     end
 
@@ -138,7 +160,7 @@ module tb_bubblesort();
         $display("\n[TB-SORT] Bubble sort benchmark starting...");
         fork
             begin
-                wait (debug_halted);
+                wait (halted_seen);
                 $display("[TB-SORT] EBREAK retired at T=%0t", $time);
             end
             begin
@@ -152,6 +174,9 @@ module tb_bubblesort();
         $display("cycles=%0d  retired=%0d  IPC=%0.4f",
                  cycle_count, retire_count,
                  real'(retire_count) / real'(cycle_count));
+        $display("predictor=%0d  branches=%0d  mispredicts=%0d  accuracy=%0.2f%%",
+                 PREDICTOR, branch_count, mispredict_count,
+                 branch_count ? 100.0 * real'(branch_count - mispredict_count) / real'(branch_count) : 0.0);
         $finish;
     end
 
