@@ -107,7 +107,7 @@ module core_riscv_tb();
     end
 
     function automatic [31:0] read_reg(input int unsigned n);
-        read_reg = dut.registers.mem[n];
+        read_reg = dut.registers.registers[n];
     endfunction
 
     // IPC instrumentation

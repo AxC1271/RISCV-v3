@@ -50,19 +50,19 @@ module tb_fib();
         // Loop: c = a + b, a = b, b = c, count--, branch back
         imem['h000 >> 2] = 32'h00000093; // addi x1, x0, 0      # a = 0
         imem['h004 >> 2] = 32'h00100113; // addi x2, x0, 1      # b = 1
-        imem['h008 >> 2] = 32'h01E00193; // addi x3, x0, 30     # count = 30
+        imem['h008 >> 2] = 32'h01D00193; // addi x3, x0, 30     # count = 29
         imem['h00C >> 2] = 32'h002081B3; // add  x3, x1, x2     # c = a + b (WRONG, reusing x3)
         // Let me redo:
         imem['h000 >> 2] = 32'h00000093; // addi x1, x0, 0      # x1 = a = 0
         imem['h004 >> 2] = 32'h00100113; // addi x2, x0, 1      # x2 = b = 1
-        imem['h008 >> 2] = 32'h01E00193; // addi x3, x0, 30     # x3 = count = 30
+        imem['h008 >> 2] = 32'h01D00193; // addi x3, x0, 30     # x3 = count = 29
         // LOOP (offset 0x0C):
         imem['h00C >> 2] = 32'h002080B3; // add  x1, x1, x2     # wait, need temp. Let me use x4
         imem['h00C >> 2] = 32'h00208233; // add  x4, x1, x2     # x4 = c = a + b
-        imem['h010 >> 2] = 32'h00210093; // addi x1, x2, 0      # x1 = a = b (copy x2 to x1)
-        imem['h014 >> 2] = 32'h00420113; // addi x2, x4, 0      # x2 = b = c (copy x4 to x2)
+        imem['h010 >> 2] = 32'h00010093; // addi x1, x2, 0      # x1 = a = b (copy x2 to x1)
+        imem['h014 >> 2] = 32'h00020113; // addi x2, x4, 0      # x2 = b = c (copy x4 to x2)
         imem['h018 >> 2] = 32'hFFF18193; // addi x3, x3, -1     # x3 = count - 1
-        imem['h01C >> 2] = 32'hFE031CE3; // bne  x3, x0, -12    # if x3 != 0, jump to LOOP (offset 0x0C = -12 from 0x1C)
+        imem['h01C >> 2] = 32'hFE0198E3; // bne  x3, x0, -16    # if x3 != 0, jump to LOOP (offset 0x0C = -16 from 0x1C)
         imem['h020 >> 2] = 32'h00100073; // ebreak              # halt
     end
 
@@ -100,7 +100,7 @@ module tb_fib();
     end
 
     function automatic [31:0] read_reg(input int unsigned n);
-        read_reg = dut.registers.mem[n];
+        read_reg = dut.registers.registers[n];
     endfunction
 
     // IPC instrumentation
@@ -169,6 +169,31 @@ module tb_fib();
         #5000000;
         $display("[TIMEOUT] Simulation exceeded 5ms");
         $fatal;
+    end
+
+
+    initial begin
+        if ($test$plusargs("verbose")) begin
+            @(posedge rst_n);
+            forever begin
+                @(posedge clk);
+                $display(
+                    "T=%0t PC=%08h | ID1 pc=%08h instr=%08h v=%b | ID2 pc=%08h instr=%08h v=%b | EX1 pc=%08h instr=%08h v=%b branch=%b | taken=%b target=%08h pred=%b mispred=%b | WB=%b%b",
+                    $time,
+                    dut.pc_curr,
+                    dut.id1_pc, dut.id1_instr, dut.id1_valid,
+                    dut.id2_pc, dut.id2_instr, dut.id2_valid,
+                    dut.ex1_pc, dut.ex1_instr, dut.ex1_valid,
+                    dut.ex1_branch,
+                    dut.conditional_taken_ex,
+                    dut.branch_target_ex,
+                    dut.ex1_predicted_taken,
+                    dut.mispredict,
+                    dut.wb1_valid,
+                    dut.wb2_valid
+                );
+            end
+        end
     end
 
 endmodule
