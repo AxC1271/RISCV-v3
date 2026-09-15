@@ -6,7 +6,9 @@ module gshare_predictor (
     output logic       prediction,
 
     input  logic[31:0] branch_pc,
+    input  logic[9:0]  branch_history,
     input  logic       branch_taken,
+    input  logic       branch_valid,
     output logic[9:0]  global_history_next
 );
 
@@ -20,7 +22,8 @@ module gshare_predictor (
     logic[9:0] pht_rd_idx, pht_wr_idx;
 
     // just like bimodals, reads are combinational
-    assign pht_rd_idx  = pc[11:2] ^ global_history;
+    assign pht_rd_idx = pc[11:2] ^ global_history;
+    assign pht_wr_idx = branch_pc[11:2] ^ branch_history;
     assign prediction = pht[pht_rd_idx][1];
 
     // updates are sequential
@@ -28,14 +31,13 @@ module gshare_predictor (
         if (!rst_n) begin
             for (int i = 0; i < 1024; i++)
                 pht[i] <= 2'b00;
-        end else begin
-            pht_wr_idx = branch_pc[11:2] ^ global_history;
+        end else if (branch_valid) begin
 
             // saturating counter update
             if (branch_taken && pht[pht_wr_idx] != 2'b11)
-                pht[pht_wr_idx] <= pht[pht_wr_idx] + 1;
+                pht[pht_wr_idx] <= pht[pht_wr_idx] + 2'b01;
             else if (!branch_taken && pht[pht_wr_idx] != 2'b00)
-                pht[pht_wr_idx] <= pht[pht_wr_idx] - 1;
+                pht[pht_wr_idx] <= pht[pht_wr_idx] - 2'b01;
         end
     end
 
