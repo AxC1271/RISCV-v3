@@ -3,13 +3,11 @@ module core_riscv_superscalar (
     input  logic        rst_n,
     input  logic        cpu_enable,
     input  logic[1:0]   predictor_sel, // 00 for always NT, 01 for bimodal, 10 for gshare
-
     output logic[31:0]  imem_addr,     // fetch from current pc and pc + 4
     output logic        imem_req,    
     input  logic[31:0]  imem_rdata1,   // older instruction
     input  logic[31:0]  imem_rdata2,   // younger instruction
     input  logic        imem_ready,
-
     output logic[31:0]  dmem_addr,
     output logic[31:0]  dmem_wdata,
     output logic[3:0]   dmem_wstrb,
@@ -26,17 +24,13 @@ module core_riscv_superscalar (
 );
 
     /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
+    *1. All of my RTL logic lives here*
+    *2. All combinational/registered logic are defined here*
+    *3. Use these during testbenches/simulations* 
     */
 
-    // program counter signals
     logic[31:0] pc_curr, pc_next;
-
-    // hazard unit flags
     logic flush;
-
     logic pc_write;
     logic mem_stall;
     logic replay_second;
@@ -50,6 +44,7 @@ module core_riscv_superscalar (
     );
 
     // here I want to try three different predictors
+
     logic prediction_nt, prediction_bimodal, prediction_gshare;
     logic prediction_bimodal2, prediction_gshare2;
     logic prediction_if1, prediction_if2;
@@ -120,8 +115,10 @@ module core_riscv_superscalar (
     assign if2_jump = (imem_rdata2[6:0] == 7'b1101111);
     assign if1_jalr = (imem_rdata1[6:0] == 7'b1100111);
     assign if2_jalr = (imem_rdata2[6:0] == 7'b1100111);
+
     assign if1_predicted_taken = if1_jump || (if1_branch && prediction_if1);
     assign if2_predicted_taken = if2_jump || (if2_branch && prediction_if2);
+
     assign if1_predicted_target = pc_curr + if1_imm;
     assign if2_predicted_target = pc_curr + 32'd4 + if2_imm;
 
@@ -139,19 +136,16 @@ module core_riscv_superscalar (
         .stall(stall_pipeline || mem_stall || !imem_ready || !cpu_enable),
         .flush(fetch_flush),
         .replay_second(replay_second),
-
         .if1_pc(pc_curr),
         .if1_instr(imem_rdata1),
         .if1_valid(imem_ready && cpu_enable), // always pass in 1'b1 unless squashed
         .if1_predicted_taken(if1_predicted_taken),
         .if1_branch_history(global_history),
-
         .if2_pc(pc_curr + 4),
         .if2_instr(imem_rdata2),
-        .if2_valid(imem_ready && cpu_enable && !(if1_predicted_taken || if1_jalr)), // always pass in 1'b1 unless squashed
+        .if2_valid(imem_ready && cpu_enable && !(if1_predicted_taken || if1_jalr)), // *always pass in 1'b1 unless squashed*
         .if2_predicted_taken(if2_predicted_taken),
         .if2_branch_history(global_history),
-
         .id1_pc(id1_pc),
         .id1_instr(id1_instr),
         .id1_valid(id1_valid),
@@ -168,6 +162,7 @@ module core_riscv_superscalar (
     logic[31:0] id_rd2_data1, id_rd2_data2;
     logic[31:0] wb1_data, wb2_data;
     logic[4:0] wb1_rd, wb2_rd;
+
     logic wb1_regwrite, wb2_regwrite, wb1_valid, wb2_valid;
     logic wb1_ebreak, wb2_ebreak;
 
@@ -182,7 +177,6 @@ module core_riscv_superscalar (
         .rd1_data2(id_rd1_data2),
         .rd2_data1(id_rd2_data1),
         .rd2_data2(id_rd2_data2),
-
         .wr1_addr(wb1_rd),
         .wr2_addr(wb2_rd),
         .wr1_data(wb1_data),
@@ -193,6 +187,7 @@ module core_riscv_superscalar (
 
     logic[3:0] id1_alu_opcode, id2_alu_opcode;
     logic[1:0] id1_op_a_sel, id2_op_a_sel;
+
     logic id1_alusrc, id2_alusrc;
     logic id1_regwrite, id2_regwrite;
     logic id1_memread, id2_memread;
@@ -251,6 +246,7 @@ module core_riscv_superscalar (
     );
 
     // 2nd stage: ID
+
     logic intra_group_raw, intra_group_waw;
     logic load_use, branch_depends, two_branches;
     logic issue_0, issue_1, stall_pipeline;
@@ -295,33 +291,37 @@ module core_riscv_superscalar (
         .flush(flush),
         .issue_0(issue_0 && id1_valid && !stall_pipeline),
         .issue_1(issue_1 && id2_valid && !stall_pipeline),
-
         .id1_pc(id1_pc), .id1_instr(id1_instr), .id1_rs1_data(id_rd1_data1), .id1_rs2_data(id_rd1_data2),
         .id1_imm(id1_imm), .id1_rs1(id1_instr[19:15]), .id1_rs2(id1_instr[24:20]), .id1_rd(id1_instr[11:7]),
         .id1_alu_opcode(id1_alu_opcode), .id1_op_a_sel(id1_op_a_sel), .id1_alusrc(id1_alusrc),
         .id1_memread(id1_memread), .id1_memwrite(id1_memwrite), .id1_memtoreg(id1_memtoreg), .id1_regwrite(id1_regwrite),
         .id1_branch(id1_branch), .id1_jump(id1_jump), .id1_jalr(id1_jalr), .id1_ebreak(id1_ebreak), .id1_valid(id1_valid),
         .id1_predicted_taken(id1_predicted_taken), .id1_branch_history(id1_branch_history),
-
         .id2_pc(id2_pc), .id2_instr(id2_instr), .id2_rs1_data(id_rd2_data1), .id2_rs2_data(id_rd2_data2),
         .id2_imm(id2_imm), .id2_rs1(id2_instr[19:15]), .id2_rs2(id2_instr[24:20]), .id2_rd(id2_instr[11:7]),
         .id2_alu_opcode(id2_alu_opcode), .id2_op_a_sel(id2_op_a_sel), .id2_alusrc(id2_alusrc),
         .id2_memread(id2_memread), .id2_memwrite(id2_memwrite), .id2_memtoreg(id2_memtoreg), .id2_regwrite(id2_regwrite),
         .id2_branch(id2_branch), .id2_jump(id2_jump), .id2_jalr(id2_jalr), .id2_ebreak(id2_ebreak), .id2_valid(id2_valid),
         .id2_predicted_taken(id2_predicted_taken), .id2_branch_history(id2_branch_history),
-
         .ex1_pc(ex1_pc), .ex1_instr(ex1_instr), .ex1_rs1_data(ex1_rs1_data), .ex1_rs2_data(ex1_rs2_data), .ex1_imm(ex1_imm),
         .ex1_rs1(ex1_rs1), .ex1_rs2(ex1_rs2), .ex1_rd(ex1_rd), .ex1_alu_opcode(ex1_alu_opcode), .ex1_op_a_sel(ex1_op_a_sel),
         .ex1_alusrc(ex1_alusrc), .ex1_memread(ex1_memread), .ex1_memwrite(ex1_memwrite), .ex1_memtoreg(ex1_memtoreg),
         .ex1_regwrite(ex1_regwrite), .ex1_branch(ex1_branch), .ex1_jump(ex1_jump), .ex1_jalr(ex1_jalr), .ex1_ebreak(ex1_ebreak),
         .ex1_valid(ex1_valid), .ex1_predicted_taken(ex1_predicted_taken), .ex1_branch_history(ex1_branch_history),
-
         .ex2_pc(ex2_pc), .ex2_instr(ex2_instr), .ex2_rs1_data(ex2_rs1_data), .ex2_rs2_data(ex2_rs2_data), .ex2_imm(ex2_imm),
         .ex2_rs1(ex2_rs1), .ex2_rs2(ex2_rs2), .ex2_rd(ex2_rd), .ex2_alu_opcode(ex2_alu_opcode), .ex2_op_a_sel(ex2_op_a_sel),
         .ex2_alusrc(ex2_alusrc), .ex2_memread(ex2_memread), .ex2_memwrite(ex2_memwrite), .ex2_memtoreg(ex2_memtoreg),
         .ex2_regwrite(ex2_regwrite), .ex2_branch(ex2_branch), .ex2_jump(ex2_jump), .ex2_jalr(ex2_jalr), .ex2_ebreak(ex2_ebreak),
         .ex2_valid(ex2_valid), .ex2_predicted_taken(ex2_predicted_taken), .ex2_branch_history(ex2_branch_history)
     );
+
+    // Forwarding sources from EX/MEM
+
+    logic[31:0] mem1_result, mem1_store_data, mem2_result, mem2_store_data;
+    logic[4:0] mem1_rd, mem2_rd;
+    logic[2:0] mem1_funct3, mem2_funct3;
+    logic mem1_memread, mem1_memwrite, mem1_memtoreg, mem1_regwrite, mem1_ebreak, mem1_valid;
+    logic mem2_memread, mem2_memwrite, mem2_memtoreg, mem2_regwrite, mem2_ebreak, mem2_valid;
 
     // 3rd stage: EX
     logic[31:0] ex1_a, ex1_b, ex2_a, ex2_b, ex1_alu_result, ex2_alu_result;
@@ -330,31 +330,87 @@ module core_riscv_superscalar (
     logic conditional_taken_ex, actual_taken_ex, mispredict;
     logic[31:0] redirect_pc;
 
+    // forwarded source operands for both execution lanes
+    logic[31:0] ex1_rs1_fwd, ex1_rs2_fwd, ex2_rs1_fwd, ex2_rs2_fwd;
+    logic[2:0] forward_1a, forward_1b, forward_2a, forward_2b;
+
+    forward_unit fu (
+        .ex1_rs1(ex1_rs1), .ex1_rs2(ex1_rs2),
+        .ex2_rs1(ex2_rs1), .ex2_rs2(ex2_rs2),
+        .mem1_rd(mem1_rd),
+        .mem1_regwrite(mem1_regwrite && !mem1_memread),
+        .mem1_valid(mem1_valid),
+        .mem2_rd(mem2_rd),
+        .mem2_regwrite(mem2_regwrite && !mem2_memread),
+        .mem2_valid(mem2_valid),
+        .wb1_rd(wb1_rd), .wb1_regwrite(wb1_regwrite), .wb1_valid(wb1_valid),
+        .wb2_rd(wb2_rd), .wb2_regwrite(wb2_regwrite), .wb2_valid(wb2_valid),
+        .forward_1a(forward_1a), .forward_1b(forward_1b),
+        .forward_2a(forward_2a), .forward_2b(forward_2b)
+    );
+
+    always_comb begin
+        case (forward_1a)
+            3'b001: ex1_rs1_fwd = wb1_data;
+            3'b010: ex1_rs1_fwd = wb2_data;
+            3'b011: ex1_rs1_fwd = mem1_result;
+            3'b100: ex1_rs1_fwd = mem2_result;
+            default: ex1_rs1_fwd = ex1_rs1_data;
+        endcase
+
+        case (forward_1b)
+            3'b001: ex1_rs2_fwd = wb1_data;
+            3'b010: ex1_rs2_fwd = wb2_data;
+            3'b011: ex1_rs2_fwd = mem1_result;
+            3'b100: ex1_rs2_fwd = mem2_result;
+            default: ex1_rs2_fwd = ex1_rs2_data;
+        endcase
+        
+        case (forward_2a)
+            3'b001: ex2_rs1_fwd = wb1_data;
+            3'b010: ex2_rs1_fwd = wb2_data;
+            3'b011: ex2_rs1_fwd = mem1_result;
+            3'b100: ex2_rs1_fwd = mem2_result;
+            default: ex2_rs1_fwd = ex2_rs1_data;
+        endcase
+
+        case (forward_2b)
+            3'b001: ex2_rs2_fwd = wb1_data;
+            3'b010: ex2_rs2_fwd = wb2_data;
+            3'b011: ex2_rs2_fwd = mem1_result;
+            3'b100: ex2_rs2_fwd = mem2_result;
+            default: ex2_rs2_fwd = ex2_rs2_data;
+        endcase
+    end
+
     always_comb begin
         case (ex1_op_a_sel)
             2'b01: ex1_a = ex1_pc;
             2'b10: ex1_a = 32'b0;
-            default: ex1_a = ex1_rs1_data;
+            default: ex1_a = ex1_rs1_fwd;
         endcase
+
         case (ex2_op_a_sel)
             2'b01: ex2_a = ex2_pc;
             2'b10: ex2_a = 32'b0;
-            default: ex2_a = ex2_rs1_data;
+            default: ex2_a = ex2_rs1_fwd;
         endcase
     end
 
-    assign ex1_b = ex1_alusrc ? ex1_imm : ex1_rs2_data;
-    assign ex2_b = ex2_alusrc ? ex2_imm : ex2_rs2_data;
+    assign ex1_b = ex1_alusrc ? ex1_imm : ex1_rs2_fwd;
+    assign ex2_b = ex2_alusrc ? ex2_imm : ex2_rs2_fwd;
 
     alu alu1 (.a(ex1_a), .b(ex1_b), .alu_opcode(ex1_alu_opcode), .result(ex1_alu_result));
+
     alu alu2 (.a(ex2_a), .b(ex2_b), .alu_opcode(ex2_alu_opcode), .result(ex2_alu_result));
 
     assign ex1_result = ex1_jump ? (ex1_pc + 32'd4) : ex1_alu_result;
+
     assign ex2_result = ex2_jump ? (ex2_pc + 32'd4) : ex2_alu_result;
 
     branch_unit bu (
-        .rs1_data(ex1_rs1_data),
-        .rs2_data(ex1_rs2_data),
+        .rs1_data(ex1_rs1_fwd),
+        .rs2_data(ex1_rs2_fwd),
         .branch(ex1_branch && ex1_valid),
         .funct3(ex1_instr[14:12]),
         .pc(ex1_pc),
@@ -364,7 +420,7 @@ module core_riscv_superscalar (
     );
 
     assign actual_taken_ex = conditional_taken_ex || (ex1_jump && ex1_valid);
-    assign redirect_pc = ex1_jalr ? ((ex1_rs1_data + ex1_imm) & 32'hffff_fffe) : branch_target_ex;
+    assign redirect_pc = ex1_jalr ? ((ex1_rs1_fwd + ex1_imm) & 32'hffff_fffe) : branch_target_ex;
     assign mispredict = ex1_valid && (ex1_branch || ex1_jump) && ((actual_taken_ex != ex1_predicted_taken) || (actual_taken_ex && ex1_jalr));
     assign flush = mispredict;
     assign branch_update_valid = ex1_valid && ex1_branch;
@@ -372,18 +428,12 @@ module core_riscv_superscalar (
     assign branch_pc_ex = ex1_pc;
     assign branch_history_ex = ex1_branch_history;
 
-    logic[31:0] mem1_result, mem1_store_data, mem2_result, mem2_store_data;
-    logic[4:0] mem1_rd, mem2_rd;
-    logic[2:0] mem1_funct3, mem2_funct3;
-    logic mem1_memread, mem1_memwrite, mem1_memtoreg, mem1_regwrite, mem1_ebreak, mem1_valid;
-    logic mem2_memread, mem2_memwrite, mem2_memtoreg, mem2_regwrite, mem2_ebreak, mem2_valid;
-
     exmem_stage exmem (
         .clk(clk), .rst_n(rst_n), .stall(mem_stall),
-        .ex1_result(ex1_result), .ex1_store_data(ex1_rs2_data), .ex1_rd(ex1_rd), .ex1_funct3(ex1_instr[14:12]),
+        .ex1_result(ex1_result), .ex1_store_data(ex1_rs2_fwd), .ex1_rd(ex1_rd), .ex1_funct3(ex1_instr[14:12]),
         .ex1_memread(ex1_memread), .ex1_memwrite(ex1_memwrite), .ex1_memtoreg(ex1_memtoreg), .ex1_regwrite(ex1_regwrite),
         .ex1_ebreak(ex1_ebreak), .ex1_valid(ex1_valid),
-        .ex2_result(ex2_result), .ex2_store_data(ex2_rs2_data), .ex2_rd(ex2_rd), .ex2_funct3(ex2_instr[14:12]),
+        .ex2_result(ex2_result), .ex2_store_data(ex2_rs2_fwd), .ex2_rd(ex2_rd), .ex2_funct3(ex2_instr[14:12]),
         .ex2_memread(ex2_memread), .ex2_memwrite(ex2_memwrite), .ex2_memtoreg(ex2_memtoreg), .ex2_regwrite(ex2_regwrite),
         .ex2_ebreak(ex2_ebreak), .ex2_valid(ex2_valid),
         .mem1_alu_result(mem1_result), .mem1_store_data(mem1_store_data), .mem1_rd(mem1_rd), .mem1_funct3(mem1_funct3),
@@ -395,6 +445,7 @@ module core_riscv_superscalar (
     );
 
     // 4th stage: MEM
+
     logic mem_lane2;
     logic[31:0] mem_addr_sel, mem_store_sel, mem_load_data, mem_load_shifted;
     logic[2:0] mem_funct3_sel;
@@ -412,17 +463,21 @@ module core_riscv_superscalar (
     assign mem_stall = cpu_enable && (mem_read_sel || mem_write_sel) && !dmem_ready;
 
     always_comb begin
+
         dmem_wdata = mem_store_sel;
         dmem_wstrb = 4'b0000;
+
         case (mem_funct3_sel)
             3'b000: begin
                 dmem_wdata = mem_store_sel << (8 * mem_addr_sel[1:0]);
                 dmem_wstrb = 4'b0001 << mem_addr_sel[1:0];
             end
+
             3'b001: begin
                 dmem_wdata = mem_store_sel << (16 * mem_addr_sel[1]);
                 dmem_wstrb = 4'b0011 << (2 * mem_addr_sel[1]);
             end
+
             default: begin
                 dmem_wdata = mem_store_sel;
                 dmem_wstrb = 4'b1111;
@@ -432,6 +487,7 @@ module core_riscv_superscalar (
 
     always_comb begin
         mem_load_shifted = dmem_rdata >> (8 * mem_addr_sel[1:0]);
+
         case (mem_funct3_sel)
             3'b000: mem_load_data = {{24{mem_load_shifted[7]}}, mem_load_shifted[7:0]};
             3'b001: mem_load_data = {{16{mem_load_shifted[15]}}, mem_load_shifted[15:0]};
@@ -448,7 +504,6 @@ module core_riscv_superscalar (
         .clk(clk),
         .rst_n(rst_n),
         .stall(mem_stall),
-        
         .mem1_alu_result(mem1_result),
         .mem1_rdata(mem1_memread ? mem_load_data : 32'b0),
         .mem1_rd(mem1_rd),
@@ -456,7 +511,6 @@ module core_riscv_superscalar (
         .mem1_memtoreg(mem1_memtoreg),
         .mem1_ebreak(mem1_ebreak),
         .mem1_valid(mem1_valid),
-
         .mem2_alu_result(mem2_result),
         .mem2_rdata(mem2_memread ? mem_load_data : 32'b0),
         .mem2_rd(mem2_rd),
@@ -464,7 +518,6 @@ module core_riscv_superscalar (
         .mem2_memtoreg(mem2_memtoreg),
         .mem2_ebreak(mem2_ebreak),
         .mem2_valid(mem2_valid),
-
         .wb1_alu_result(wb1_alu_result),
         .wb1_rdata(wb1_rdata),
         .wb1_rd(wb1_rd),
@@ -472,7 +525,6 @@ module core_riscv_superscalar (
         .wb1_memtoreg(wb1_memtoreg),
         .wb1_ebreak(wb1_ebreak),
         .wb1_valid(wb1_valid),
-
         .wb2_alu_result(wb2_alu_result),
         .wb2_rdata(wb2_rdata),
         .wb2_rd(wb2_rd),
@@ -480,13 +532,16 @@ module core_riscv_superscalar (
         .wb2_memtoreg(wb2_memtoreg),
         .wb2_ebreak(wb2_ebreak),
         .wb2_valid(wb2_valid)
+
     );
 
     assign wb1_data = wb1_memtoreg ? wb1_rdata : wb1_alu_result;
     assign wb2_data = wb2_memtoreg ? wb2_rdata : wb2_alu_result;
 
     // 5th stage: WB and combinational assignments
+
     hazard_unit hu (
+        .id1_valid(id1_valid),
         .id1_rd(id1_instr[11:7]),
         .id1_rs1(id1_instr[19:15]),
         .id1_rs2(id1_instr[24:20]),
@@ -494,7 +549,8 @@ module core_riscv_superscalar (
         .id1_isbranch(id1_branch && id1_valid),
         .id1_uses_rs1(id1_uses_rs1),
         .id1_uses_rs2(id1_uses_rs2),
-        
+
+        .id2_valid(id2_valid),
         .id2_rd(id2_instr[11:7]),
         .id2_rs1(id2_instr[19:15]),
         .id2_rs2(id2_instr[24:20]),
@@ -503,12 +559,9 @@ module core_riscv_superscalar (
         .id2_uses_rs1(id2_uses_rs1),
         .id2_uses_rs2(id2_uses_rs2),
 
-        .dmem_rd_en_mem(mem1_valid && mem1_memread),
-        .rd_mem(mem1_rd),
-        .ex1_regwrite(ex1_regwrite), .ex1_rd(ex1_rd), .ex1_valid(ex1_valid),
-        .ex2_regwrite(ex2_regwrite), .ex2_rd(ex2_rd), .ex2_valid(ex2_valid),
-        .mem1_regwrite(mem1_regwrite), .mem1_rd(mem1_rd), .mem1_valid(mem1_valid),
-        .mem2_regwrite(mem2_regwrite), .mem2_rd(mem2_rd), .mem2_valid(mem2_valid),
+        .ex1_memread(ex1_memread), .ex1_rd(ex1_rd), .ex1_valid(ex1_valid),
+        .ex2_memread(ex2_memread), .ex2_rd(ex2_rd), .ex2_valid(ex2_valid),
+
         .intra_group_raw(intra_group_raw),
         .intra_group_waw(intra_group_waw),
         .load_use(load_use),

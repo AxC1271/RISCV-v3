@@ -5,6 +5,7 @@
 ../0-rtl/core_riscv_superscalar.sv
 ../0-rtl/dispatch_unit.sv
 ../0-rtl/exmem_stage.sv
+../0-rtl/forward_unit.sv
 ../0-rtl/gshare_predictor.sv
 ../0-rtl/hazard_unit.sv
 ../0-rtl/idex_stage.sv
