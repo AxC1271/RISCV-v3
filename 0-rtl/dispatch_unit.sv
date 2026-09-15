@@ -5,6 +5,9 @@ module dispatch_unit (
     input  logic load_use,        // load result needed by either instr
     input  logic branch_depends,  // instr_1 is branch, depends on instr_0
     input  logic two_branches,    // both instr_0 and instr_1 are branches
+    input  logic structural_hazard,
+    input  logic control_in_slot0,
+    input  logic control_in_slot1,
     // how to issue?
     output logic issue_0,       // 1 = instr_0 proceeds
     output logic issue_1,       // 1 = instr_1 proceeds
@@ -19,11 +22,14 @@ module dispatch_unit (
 
     assign issue_0 = !load_use;
     assign issue_1 = !(
-        load_use        || 
-        intra_group_raw ||
-        intra_group_waw ||
-        branch_depends  ||
-        two_branches
+        load_use          || 
+        intra_group_raw   ||
+        intra_group_waw   ||
+        branch_depends    ||
+        two_branches      ||
+        structural_hazard ||
+        control_in_slot0  ||
+        control_in_slot1
     );
     assign stall_pipeline = load_use;
 

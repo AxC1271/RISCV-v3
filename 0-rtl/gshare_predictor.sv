@@ -2,8 +2,10 @@ module gshare_predictor (
     input  logic       clk,
     input  logic       rst_n,
     input  logic[31:0] pc,
+    input  logic[31:0] pc2,
     input  logic[9:0]  global_history,
     output logic       prediction,
+    output logic       prediction2,
 
     input  logic[31:0] branch_pc,
     input  logic[9:0]  branch_history,
@@ -19,12 +21,14 @@ module gshare_predictor (
     */
     
     logic[1:0] pht [0:1023];
-    logic[9:0] pht_rd_idx, pht_wr_idx;
+    logic[9:0] pht_rd_idx, pht_rd_idx2, pht_wr_idx;
 
     // just like bimodals, reads are combinational
     assign pht_rd_idx = pc[11:2] ^ global_history;
+    assign pht_rd_idx2 = pc2[11:2] ^ global_history;
     assign pht_wr_idx = branch_pc[11:2] ^ branch_history;
     assign prediction = pht[pht_rd_idx][1];
+    assign prediction2 = pht[pht_rd_idx2][1];
 
     // updates are sequential
     always_ff @(posedge clk) begin

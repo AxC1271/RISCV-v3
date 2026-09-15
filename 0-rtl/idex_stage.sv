@@ -26,6 +26,8 @@ module idex_stage (
     input  logic       id1_jalr,
     input  logic       id1_ebreak,
     input  logic       id1_valid,
+    input  logic       id1_predicted_taken,
+    input  logic[9:0]  id1_branch_history,
 
     input  logic[31:0] id2_pc,
     input  logic[31:0] id2_instr,
@@ -47,6 +49,8 @@ module idex_stage (
     input  logic       id2_jalr,
     input  logic       id2_ebreak,
     input  logic       id2_valid,
+    input  logic       id2_predicted_taken,
+    input  logic[9:0]  id2_branch_history,
 
     output logic[31:0] ex1_pc,
     output logic[31:0] ex1_instr,
@@ -68,6 +72,8 @@ module idex_stage (
     output logic       ex1_jalr,
     output logic       ex1_ebreak,
     output logic       ex1_valid,
+    output logic       ex1_predicted_taken,
+    output logic[9:0]  ex1_branch_history,
 
     output logic[31:0] ex2_pc,
     output logic[31:0] ex2_instr,
@@ -88,7 +94,9 @@ module idex_stage (
     output logic       ex2_jump,
     output logic       ex2_jalr,
     output logic       ex2_ebreak,
-    output logic       ex2_valid
+    output logic       ex2_valid,
+    output logic       ex2_predicted_taken,
+    output logic[9:0]  ex2_branch_history
 );
 
     /*
@@ -103,6 +111,10 @@ module idex_stage (
             // passes through the pipeline
             ex1_valid <= 1'b0;
             ex2_valid <= 1'b0;
+            ex1_predicted_taken <= 1'b0;
+            ex2_predicted_taken <= 1'b0;
+            ex1_branch_history <= 10'b0;
+            ex2_branch_history <= 10'b0;
         end else if (stall) begin
             // do nothing, all signals hold
         end else begin
@@ -129,6 +141,8 @@ module idex_stage (
             ex1_jump       <= id1_jump;
             ex1_jalr       <= id1_jalr;
             ex1_ebreak     <= id1_ebreak;
+            ex1_predicted_taken <= id1_predicted_taken;
+            ex1_branch_history <= id1_branch_history;
 
             ex2_pc         <= id2_pc;
             ex2_instr      <= id2_instr;
@@ -149,6 +163,8 @@ module idex_stage (
             ex2_jump       <= id2_jump;
             ex2_jalr       <= id2_jalr;
             ex2_ebreak     <= id2_ebreak;
+            ex2_predicted_taken <= id2_predicted_taken;
+            ex2_branch_history <= id2_branch_history;
         end
     end
 
