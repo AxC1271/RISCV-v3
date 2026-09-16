@@ -1,8 +1,7 @@
 read_verilog -sv ../0-rtl/alu.sv
-read_verilog -sv ../0-rtl/bimodal_predictor.sv
 read_verilog -sv ../0-rtl/branch_unit.sv
 read_verilog -sv ../0-rtl/control_unit.sv
-read_verilog -sv ../0-rtl/core_riscv_superscalar.sv
+read_verilog -sv ../0-rtl/core_riscv_superscalar_FINAL.sv
 read_verilog -sv ../0-rtl/dispatch_unit.sv
 read_verilog -sv ../0-rtl/exmem_stage.sv
 read_verilog -sv ../0-rtl/forward_unit.sv
@@ -12,17 +11,26 @@ read_verilog -sv ../0-rtl/idex_stage.sv
 read_verilog -sv ../0-rtl/ifid_stage.sv
 read_verilog -sv ../0-rtl/immediate_generator.sv
 read_verilog -sv ../0-rtl/memwb_stage.sv
-read_verilog -sv ../0-rtl/nt_predictor.sv
 read_verilog -sv ../0-rtl/program_counter.sv
 read_verilog -sv ../0-rtl/register_file.sv
 
+hierarchy -check -top core_riscv_superscalar_FINAL
 
-hierarchy -check -top core_riscv
-synth -top core_riscv
-opt_clean
-dfflibmap -liberty sky130_fd_sc_hd__tt_025C_1v80.lib
-abc -liberty sky130_fd_sc_hd__tt_025C_1v80.lib -dont_use sky130_fd_sc_hd__*_0 -D 8000
-splitnets -ports
+synth -top core_riscv_superscalar_FINAL
+
+opt -full
 opt_clean -purge
-tee -o synth_stats_cacheless.txt stat -liberty sky130_fd_sc_hd__tt_025C_1v80.lib
-write_verilog -noattr -noexpr core_riscv_cacheless_synth.v
+
+dfflibmap -liberty sky130_fd_sc_hd__tt_025C_1v80.lib
+
+abc \
+    -liberty sky130_fd_sc_hd__tt_025C_1v80.lib \
+    -dont_use sky130_fd_sc_hd__*_0 \
+    -D 17000
+
+opt_clean -purge
+
+tee -o synth_stats_gshare.txt \
+    stat -liberty sky130_fd_sc_hd__tt_025C_1v80.lib
+
+write_verilog -noattr -noexpr core_riscv_superscalar_gshare_synth.v
