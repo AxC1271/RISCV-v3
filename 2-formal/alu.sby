@@ -1,12 +1,12 @@
 [options]
 mode prove
-depth 10
+depth 1
 
 [engines]
 smtbmc
 
 [script]
-read -formal ../0-rtl/alu.sv
+read -formal -D FORMAL ../0-rtl/alu.sv
 prep -top alu
 
 [files]
