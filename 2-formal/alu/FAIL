@@ -1,0 +1,9 @@
+Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+engine_0 (smtbmc) returned FAIL for basecase
+counterexample trace [basecase]: engine_0/trace.vcd
+counterexample trace [basecase]: engine_0/trace.yw
+  failed assertion alu._witness_.check_assert_alu_sv_69_44 at alu.sv:69.13-69.54
+counterexample trace [induction]: engine_0/trace_induct.vcd
+counterexample trace [induction]: engine_0/trace_induct.yw
+  failed assertion alu._witness_.check_assert_alu_sv_69_44 at alu.sv:69.13-69.54

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+<testsuite timestamp="2026-09-21T15:14:54" hostname="Andrews-MacBook-Pro-12.local" package="alu" id="0" name="default" tests="16" errors="0" failures="2" time="0" skipped="15">
+<properties>
+<property name="os" value="Darwin"/>
+<property name="expect" value="PASS"/>
+<property name="status" value="FAIL"/>
+</properties>
+<testcase classname="default" name="build execution" time="0">
+<failure type="FAIL" message="Task returned status FAIL." />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:55.13-55.38" time="0" type="ASSERT" location="alu.sv:55.13-55.38" id="_witness_.check_assert_alu_sv_55_16">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:57.13-57.38" time="0" type="ASSERT" location="alu.sv:57.13-57.38" id="_witness_.check_assert_alu_sv_57_20">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:59.13-59.38" time="0" type="ASSERT" location="alu.sv:59.13-59.38" id="_witness_.check_assert_alu_sv_59_24">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:61.13-61.38" time="0" type="ASSERT" location="alu.sv:61.13-61.38" id="_witness_.check_assert_alu_sv_61_28">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:63.13-63.38" time="0" type="ASSERT" location="alu.sv:63.13-63.38" id="_witness_.check_assert_alu_sv_63_32">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:65.13-65.44" time="0" type="ASSERT" location="alu.sv:65.13-65.44" id="_witness_.check_assert_alu_sv_65_36">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:67.13-67.44" time="0" type="ASSERT" location="alu.sv:67.13-67.44" id="_witness_.check_assert_alu_sv_67_40">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:69.13-69.54" time="0" type="ASSERT" location="alu.sv:69.13-69.54" id="_witness_.check_assert_alu_sv_69_44" tracefile="engine_0/trace.vcd">
+<failure type="ASSERT" message="Property ASSERT in alu at alu.sv:69.13-69.54 failed. Trace file: engine_0/trace.vcd" />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:71.13-74.14" time="0" type="ASSERT" location="alu.sv:71.13-74.14" id="_witness_.check_assert_alu_sv_71_48">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:76.13-79.14" time="0" type="ASSERT" location="alu.sv:76.13-79.14" id="_witness_.check_assert_alu_sv_76_53">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:82.13-85.14" time="0" type="ASSERT" location="alu.sv:82.13-85.14" id="_witness_.check_assert_alu_sv_82_60">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:88.13-88.43" time="0" type="ASSERT" location="alu.sv:88.13-88.43" id="_witness_.check_assert_alu_sv_88_65">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:90.13-90.32" time="0" type="ASSERT" location="alu.sv:90.13-90.32" id="_witness_.check_assert_alu_sv_90_70">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:92.13-92.32" time="0" type="ASSERT" location="alu.sv:92.13-92.32" id="_witness_.check_assert_alu_sv_92_75">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:94.13-94.36" time="0" type="ASSERT" location="alu.sv:94.13-94.36" id="_witness_.check_assert_alu_sv_94_80">
+<skipped />
+</testcase>
+<testcase classname="default" name="Property ASSERT in alu at alu.sv:96.13-96.32" time="0" type="ASSERT" location="alu.sv:96.13-96.32" id="_witness_.check_assert_alu_sv_96_85">
+<skipped />
+</testcase>
+<system-out>SBY 15:14:52 [alu] Removing directory '/Users/achen1228/RISCV-v3/2-formal/alu'.
+SBY 15:14:52 [alu] Copy '/Users/achen1228/RISCV-v3/2-formal/../0-rtl/alu.sv' to '/Users/achen1228/RISCV-v3/2-formal/alu/src/alu.sv'.
+SBY 15:14:52 [alu] engine_0: smtbmc
+SBY 15:14:52 [alu] base: starting process &quot;cd alu/src; yosys -ql ../model/design.log ../model/design.ys&quot;
+SBY 15:14:53 [alu] base: finished (returncode=0)
+SBY 15:14:53 [alu] prep: starting process &quot;cd alu/model; yosys -ql design_prep.log design_prep.ys&quot;
+SBY 15:14:53 [alu] prep: finished (returncode=0)
+SBY 15:14:53 [alu] smt2: starting process &quot;cd alu/model; yosys -ql design_smt2.log design_smt2.ys&quot;
+SBY 15:14:53 [alu] smt2: finished (returncode=0)
+SBY 15:14:53 [alu] engine_0.basecase: starting process &quot;cd alu; yosys-smtbmc --presat --unroll --noprogress -t 1  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2&quot;
+SBY 15:14:53 [alu] engine_0.induction: starting process &quot;cd alu; yosys-smtbmc --presat --unroll -i --noprogress -t 1  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2&quot;
+SBY 15:14:53 [alu] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY 15:14:53 [alu] engine_0.induction: ##   0:00:00  Solver: yices
+SBY 15:14:53 [alu] engine_0.basecase: ##   0:00:00  Checking assumptions in step 0..
+SBY 15:14:53 [alu] engine_0.induction: ##   0:00:00  Trying induction in step 1..
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Checking assertions in step 0..
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Assert failed in alu: alu.sv:69.13-69.54 (_witness_.check_assert_alu_sv_69_44)
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Trying induction in step 0..
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Temporal induction failed!
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Assert failed in alu: alu.sv:69.13-69.54 (_witness_.check_assert_alu_sv_69_44)
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Writing trace to VCD file: engine_0/trace_induct.vcd
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Status: failed
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_induct_tb.v
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Writing trace to constraints file: engine_0/trace_induct.smtc
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace_induct.yw
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Status: failed
+SBY 15:14:54 [alu] engine_0.basecase: finished (returncode=1)
+SBY 15:14:54 [alu] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY 15:14:54 [alu] engine_0.induction: terminating process
+SBY 15:14:54 [alu] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY 15:14:54 [alu] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 15:14:54 [alu] summary: engine_0 (smtbmc) returned FAIL for basecase
+SBY 15:14:54 [alu] summary: counterexample trace [basecase]: alu/engine_0/trace.vcd
+SBY 15:14:54 [alu] summary:   failed assertion alu._witness_.check_assert_alu_sv_69_44 at alu.sv:69.13-69.54
+SBY 15:14:54 [alu] summary: counterexample trace [induction]: alu/engine_0/trace_induct.vcd
+SBY 15:14:54 [alu] summary:   failed assertion alu._witness_.check_assert_alu_sv_69_44 at alu.sv:69.13-69.54
+SBY 15:14:54 [alu] DONE (FAIL, rc=2)
+</system-out>
+<system-err>
+</system-err>
+</testsuite>
+</testsuites>

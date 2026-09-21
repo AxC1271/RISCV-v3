@@ -1,0 +1,69 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+24 (git sha1 0e82bbefe-dirty, Release, Clang /usr/local/osxcross/target/bin/aarch64-apple-darwin23.5-clang++ 18.1.8)
+
+-- Executing script file `design_smt2.ys' --
+
+1. Executing RTLIL frontend.
+Input filename: design_prep.il
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `alu'. Setting top module to alu.
+
+2.1. Analyzing design hierarchy..
+Top module:  \alu
+
+2.2. Analyzing design hierarchy..
+Top module:  \alu
+Removed 0 unused modules.
+Module alu directly or indirectly contains formal properties -> setting "keep" attribute.
+
+3. Executing FORMALFF pass.
+
+4. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+5. Printing statistics.
+
+=== alu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       65 wires
+      502 wire bits
+        4 public wires
+      100 public wire bits
+        4 ports
+      100 port bits
+       78 cells
+        1   $add
+        1   $and
+       16   $assert
+       22   $eq
+        1   $gt
+        4   $logic_and
+        3   $logic_not
+        2   $logic_or
+        2   $lt
+       18   $mux
+        1   $or
+        1   $pmux
+        1   $shl
+        1   $shr
+        2   $sshr
+        1   $sub
+        1   $xor
+
+6. Executing SMT2 backend.
+
+6.1. Executing BMUXMAP pass.
+
+6.2. Executing DEMUXMAP pass.
+Creating SMT-LIBv2 representation of module alu.
+
+End of script. Logfile hash: ffc136bce7, time: 0.00s, user: 0.01s, system: 0.01s, MEM: 16.42 MB peak
+Yosys 0.67+24 (git sha1 0e82bbefe-dirty, Release, Clang /usr/local/osxcross/target/bin/aarch64-apple-darwin23.5-clang++ 18.1.8)
+Time spent: 68% 2x write_smt2 (0 sec), 19% 2x read_rtlil (0 sec), ...

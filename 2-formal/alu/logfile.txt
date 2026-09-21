@@ -1,0 +1,42 @@
+SBY 15:14:52 [alu] Removing directory '/Users/achen1228/RISCV-v3/2-formal/alu'.
+SBY 15:14:52 [alu] Copy '/Users/achen1228/RISCV-v3/2-formal/../0-rtl/alu.sv' to '/Users/achen1228/RISCV-v3/2-formal/alu/src/alu.sv'.
+SBY 15:14:52 [alu] engine_0: smtbmc
+SBY 15:14:52 [alu] base: starting process "cd alu/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 15:14:53 [alu] base: finished (returncode=0)
+SBY 15:14:53 [alu] prep: starting process "cd alu/model; yosys -ql design_prep.log design_prep.ys"
+SBY 15:14:53 [alu] prep: finished (returncode=0)
+SBY 15:14:53 [alu] smt2: starting process "cd alu/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY 15:14:53 [alu] smt2: finished (returncode=0)
+SBY 15:14:53 [alu] engine_0.basecase: starting process "cd alu; yosys-smtbmc --presat --unroll --noprogress -t 1  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY 15:14:53 [alu] engine_0.induction: starting process "cd alu; yosys-smtbmc --presat --unroll -i --noprogress -t 1  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY 15:14:53 [alu] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY 15:14:53 [alu] engine_0.induction: ##   0:00:00  Solver: yices
+SBY 15:14:53 [alu] engine_0.basecase: ##   0:00:00  Checking assumptions in step 0..
+SBY 15:14:53 [alu] engine_0.induction: ##   0:00:00  Trying induction in step 1..
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Checking assertions in step 0..
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Assert failed in alu: alu.sv:69.13-69.54 (_witness_.check_assert_alu_sv_69_44)
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Trying induction in step 0..
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Temporal induction failed!
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Assert failed in alu: alu.sv:69.13-69.54 (_witness_.check_assert_alu_sv_69_44)
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Writing trace to VCD file: engine_0/trace_induct.vcd
+SBY 15:14:54 [alu] engine_0.basecase: ##   0:00:00  Status: failed
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_induct_tb.v
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Writing trace to constraints file: engine_0/trace_induct.smtc
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace_induct.yw
+SBY 15:14:54 [alu] engine_0.induction: ##   0:00:00  Status: failed
+SBY 15:14:54 [alu] engine_0.basecase: finished (returncode=1)
+SBY 15:14:54 [alu] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY 15:14:54 [alu] engine_0.induction: terminating process
+SBY 15:14:54 [alu] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY 15:14:54 [alu] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 15:14:54 [alu] summary: engine_0 (smtbmc) returned FAIL for basecase
+SBY 15:14:54 [alu] summary: counterexample trace [basecase]: alu/engine_0/trace.vcd
+SBY 15:14:54 [alu] summary:   failed assertion alu._witness_.check_assert_alu_sv_69_44 at alu.sv:69.13-69.54
+SBY 15:14:54 [alu] summary: counterexample trace [induction]: alu/engine_0/trace_induct.vcd
+SBY 15:14:54 [alu] summary:   failed assertion alu._witness_.check_assert_alu_sv_69_44 at alu.sv:69.13-69.54
+SBY 15:14:54 [alu] DONE (FAIL, rc=2)
