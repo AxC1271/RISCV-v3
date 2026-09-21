@@ -2,7 +2,6 @@ module core_riscv_superscalar (
     input  logic        clk,
     input  logic        rst_n,
     input  logic        cpu_enable,
-    input  logic[1:0]   predictor_sel, // 00 for always NT, 01 for bimodal, 10 for gshare
     output logic[31:0]  imem_addr,     // fetch from current pc and pc + 4
     output logic        imem_req,    
     input  logic[31:0]  imem_rdata1,   // older instruction
@@ -15,7 +14,7 @@ module core_riscv_superscalar (
     output logic        dmem_wr_en,
     input  logic[31:0]  dmem_rdata,
     input  logic        dmem_ready,
-
+    
     // debug / testbench visibility
     output logic [31:0] debug_pc,
     output logic [31:0] debug_instr,
@@ -24,9 +23,9 @@ module core_riscv_superscalar (
 );
 
     /*
-    *1. All of my RTL logic lives here*
-    *2. All combinational/registered logic are defined here*
-    *3. Use these during testbenches/simulations* 
+    1. All of my RTL logic lives here
+    2. All combinational/registered logic are defined here
+    3. Use these during testbenches/simulations
     */
 
     logic[31:0] pc_curr, pc_next;
@@ -43,32 +42,14 @@ module core_riscv_superscalar (
         .pc_out  (pc_curr)
     );
 
-    // here I want to try three different predictors
-
-    logic prediction_nt, prediction_bimodal, prediction_gshare;
-    logic prediction_bimodal2, prediction_gshare2;
+    // gshare-only branch prediction
+    logic prediction_gshare, prediction_gshare2;
     logic prediction_if1, prediction_if2;
+
     logic[9:0] global_history, global_history_next;
     logic branch_update_valid, branch_taken_ex;
     logic[31:0] branch_pc_ex;
     logic[9:0] branch_history_ex;
-
-    nt_predictor nt (
-        .pc        (pc_curr),
-        .prediction(prediction_nt)
-    );
-
-    bimodal_predictor bimodal (
-        .clk         (clk),
-        .rst_n       (rst_n),
-        .pc          (pc_curr),
-        .pc2         (pc_curr + 32'd4),
-        .prediction  (prediction_bimodal),
-        .prediction2 (prediction_bimodal2),
-        .branch_pc   (branch_pc_ex),
-        .branch_taken(branch_taken_ex),
-        .branch_valid(branch_update_valid)
-    );
 
     gshare_predictor gshare (
         .clk                (clk),
@@ -85,14 +66,8 @@ module core_riscv_superscalar (
         .global_history_next(global_history_next)
     );
 
-    always_comb begin
-        case (predictor_sel)
-            2'b00: begin prediction_if1 = prediction_nt;      prediction_if2 = 1'b0; end
-            2'b01: begin prediction_if1 = prediction_bimodal; prediction_if2 = prediction_bimodal2; end
-            2'b10: begin prediction_if1 = prediction_gshare;  prediction_if2 = prediction_gshare2; end
-            default: begin prediction_if1 = prediction_nt; prediction_if2 = 1'b0; end
-        endcase
-    end
+    assign prediction_if1 = prediction_gshare;
+    assign prediction_if2 = prediction_gshare2;
 
     always_ff @(posedge clk) begin
         if (!rst_n)
@@ -115,14 +90,13 @@ module core_riscv_superscalar (
     assign if2_jump = (imem_rdata2[6:0] == 7'b1101111);
     assign if1_jalr = (imem_rdata1[6:0] == 7'b1100111);
     assign if2_jalr = (imem_rdata2[6:0] == 7'b1100111);
-
     assign if1_predicted_taken = if1_jump || (if1_branch && prediction_if1);
     assign if2_predicted_taken = if2_jump || (if2_branch && prediction_if2);
-
     assign if1_predicted_target = pc_curr + if1_imm;
     assign if2_predicted_target = pc_curr + 32'd4 + if2_imm;
 
     // 1st stage: IF
+
     logic[31:0] id1_pc, id2_pc;
     logic[31:0] id1_instr, id2_instr;
     logic id1_valid, id2_valid;
@@ -143,7 +117,7 @@ module core_riscv_superscalar (
         .if1_branch_history(global_history),
         .if2_pc(pc_curr + 4),
         .if2_instr(imem_rdata2),
-        .if2_valid(imem_ready && cpu_enable && !(if1_predicted_taken || if1_jalr)), // *always pass in 1'b1 unless squashed*
+        .if2_valid(imem_ready && cpu_enable && !(if1_predicted_taken || if1_jalr)), // always pass in 1'b1 unless squashed
         .if2_predicted_taken(if2_predicted_taken),
         .if2_branch_history(global_history),
         .id1_pc(id1_pc),
@@ -162,7 +136,6 @@ module core_riscv_superscalar (
     logic[31:0] id_rd2_data1, id_rd2_data2;
     logic[31:0] wb1_data, wb2_data;
     logic[4:0] wb1_rd, wb2_rd;
-
     logic wb1_regwrite, wb2_regwrite, wb1_valid, wb2_valid;
     logic wb1_ebreak, wb2_ebreak;
 
@@ -187,7 +160,6 @@ module core_riscv_superscalar (
 
     logic[3:0] id1_alu_opcode, id2_alu_opcode;
     logic[1:0] id1_op_a_sel, id2_op_a_sel;
-
     logic id1_alusrc, id2_alusrc;
     logic id1_regwrite, id2_regwrite;
     logic id1_memread, id2_memread;
@@ -316,7 +288,6 @@ module core_riscv_superscalar (
     );
 
     // Forwarding sources from EX/MEM
-
     logic[31:0] mem1_result, mem1_store_data, mem2_result, mem2_store_data;
     logic[4:0] mem1_rd, mem2_rd;
     logic[2:0] mem1_funct3, mem2_funct3;
@@ -331,6 +302,7 @@ module core_riscv_superscalar (
     logic[31:0] redirect_pc;
 
     // forwarded source operands for both execution lanes
+
     logic[31:0] ex1_rs1_fwd, ex1_rs2_fwd, ex2_rs1_fwd, ex2_rs2_fwd;
     logic[2:0] forward_1a, forward_1b, forward_2a, forward_2b;
 
@@ -350,6 +322,7 @@ module core_riscv_superscalar (
     );
 
     always_comb begin
+
         case (forward_1a)
             3'b001: ex1_rs1_fwd = wb1_data;
             3'b010: ex1_rs1_fwd = wb2_data;
@@ -365,7 +338,7 @@ module core_riscv_superscalar (
             3'b100: ex1_rs2_fwd = mem2_result;
             default: ex1_rs2_fwd = ex1_rs2_data;
         endcase
-        
+
         case (forward_2a)
             3'b001: ex2_rs1_fwd = wb1_data;
             3'b010: ex2_rs1_fwd = wb2_data;
@@ -384,6 +357,7 @@ module core_riscv_superscalar (
     end
 
     always_comb begin
+
         case (ex1_op_a_sel)
             2'b01: ex1_a = ex1_pc;
             2'b10: ex1_a = 32'b0;
@@ -395,17 +369,16 @@ module core_riscv_superscalar (
             2'b10: ex2_a = 32'b0;
             default: ex2_a = ex2_rs1_fwd;
         endcase
+
     end
 
     assign ex1_b = ex1_alusrc ? ex1_imm : ex1_rs2_fwd;
     assign ex2_b = ex2_alusrc ? ex2_imm : ex2_rs2_fwd;
 
     alu alu1 (.a(ex1_a), .b(ex1_b), .alu_opcode(ex1_alu_opcode), .result(ex1_alu_result));
-
     alu alu2 (.a(ex2_a), .b(ex2_b), .alu_opcode(ex2_alu_opcode), .result(ex2_alu_result));
 
     assign ex1_result = ex1_jump ? (ex1_pc + 32'd4) : ex1_alu_result;
-
     assign ex2_result = ex2_jump ? (ex2_pc + 32'd4) : ex2_alu_result;
 
     branch_unit bu (
@@ -442,6 +415,7 @@ module core_riscv_superscalar (
         .mem2_alu_result(mem2_result), .mem2_store_data(mem2_store_data), .mem2_rd(mem2_rd), .mem2_funct3(mem2_funct3),
         .mem2_memread(mem2_memread), .mem2_memwrite(mem2_memwrite), .mem2_memtoreg(mem2_memtoreg), .mem2_regwrite(mem2_regwrite),
         .mem2_ebreak(mem2_ebreak), .mem2_valid(mem2_valid)
+
     );
 
     // 4th stage: MEM
@@ -468,6 +442,7 @@ module core_riscv_superscalar (
         dmem_wstrb = 4'b0000;
 
         case (mem_funct3_sel)
+
             3'b000: begin
                 dmem_wdata = mem_store_sel << (8 * mem_addr_sel[1:0]);
                 dmem_wstrb = 4'b0001 << mem_addr_sel[1:0];
@@ -486,6 +461,7 @@ module core_riscv_superscalar (
     end
 
     always_comb begin
+
         mem_load_shifted = dmem_rdata >> (8 * mem_addr_sel[1:0]);
 
         case (mem_funct3_sel)
@@ -532,7 +508,6 @@ module core_riscv_superscalar (
         .wb2_memtoreg(wb2_memtoreg),
         .wb2_ebreak(wb2_ebreak),
         .wb2_valid(wb2_valid)
-
     );
 
     assign wb1_data = wb1_memtoreg ? wb1_rdata : wb1_alu_result;
@@ -549,7 +524,6 @@ module core_riscv_superscalar (
         .id1_isbranch(id1_branch && id1_valid),
         .id1_uses_rs1(id1_uses_rs1),
         .id1_uses_rs2(id1_uses_rs2),
-
         .id2_valid(id2_valid),
         .id2_rd(id2_instr[11:7]),
         .id2_rs1(id2_instr[19:15]),
@@ -558,10 +532,8 @@ module core_riscv_superscalar (
         .id2_isbranch(id2_branch && id2_valid),
         .id2_uses_rs1(id2_uses_rs1),
         .id2_uses_rs2(id2_uses_rs2),
-
         .ex1_memread(ex1_memread), .ex1_rd(ex1_rd), .ex1_valid(ex1_valid),
         .ex2_memread(ex2_memread), .ex2_rd(ex2_rd), .ex2_valid(ex2_valid),
-
         .intra_group_raw(intra_group_raw),
         .intra_group_waw(intra_group_waw),
         .load_use(load_use),
@@ -590,9 +562,9 @@ module core_riscv_superscalar (
     assign debug_halted = (wb1_valid && wb1_ebreak) || (wb2_valid && wb2_ebreak);
 
     /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
+    1. My formal properties live here*
+    2. All asserts, assumes, and covers are defined here*
+    3. Use these during SymbiYosys for formal verification*
     */
 
 endmodule
