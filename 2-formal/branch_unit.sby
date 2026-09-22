@@ -1,0 +1,13 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc
+
+[script]
+read -formal -D FORMAL branch_unit.sv
+prep -top branch_unit
+
+[files]
+../0-rtl/branch_unit.sv

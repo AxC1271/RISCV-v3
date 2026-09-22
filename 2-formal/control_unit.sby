@@ -1,0 +1,13 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc
+
+[script]
+read -formal -D FORMAL control_unit.sv
+prep -top control_unit
+
+[files]
+../0-rtl/control_unit.sv

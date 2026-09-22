@@ -1,0 +1,13 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc
+
+[script]
+read -formal -D FORMAL dispatch_unit.sv
+prep -top dispatch_unit
+
+[files]
+../0-rtl/dispatch_unit.sv

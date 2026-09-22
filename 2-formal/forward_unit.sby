@@ -1,0 +1,13 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc
+
+[script]
+read -formal -D FORMAL forward_unit.sv
+prep -top forward_unit
+
+[files]
+../0-rtl/forward_unit.sv

@@ -49,51 +49,51 @@ module alu (
     *3. Use these during SymbiYosys for formal verification*
     */
 
-`ifdef FORMAL
-    always_comb begin
-        if (alu_opcode == ALU_ADD)
-            assert(result == (a + b));
-        if (alu_opcode == ALU_SUB)
-            assert(result == (a - b));
-        if (alu_opcode == ALU_AND)
-            assert(result == (a & b));
-        if (alu_opcode == ALU_OR)
-            assert(result == (a | b));
-        if (alu_opcode == ALU_XOR)
-            assert(result == (a ^ b));
-        if (alu_opcode == ALU_SLL)
-            assert(result == (a << b[4:0]));
-        if (alu_opcode == ALU_SRL)
-            assert(result == (a >> b[4:0]));
-        if (alu_opcode == ALU_SRA)
-            assert(result == ($signed(a) >>> b[4:0]));
-        if (alu_opcode == ALU_SLT)
-            assert(
-                result ==
-                (($signed(a) < $signed(b)) ? 32'd1 : 32'd0)
-            );
-        if (alu_opcode == ALU_SLTU)
-            assert(
-                result ==
-                ((a < b) ? 32'd1 : 32'd0)
-            );
-        if ((alu_opcode == ALU_SLT) ||
-            (alu_opcode == ALU_SLTU)) begin
-            assert(
-                (result == 32'd0) ||
-                (result == 32'd1)
-            );
+    `ifdef FORMAL
+        always_comb begin
+            if (alu_opcode == ALU_ADD)
+                assert(result == (a + b));
+            if (alu_opcode == ALU_SUB)
+                assert(result == (a - b));
+            if (alu_opcode == ALU_AND)
+                assert(result == (a & b));
+            if (alu_opcode == ALU_OR)
+                assert(result == (a | b));
+            if (alu_opcode == ALU_XOR)
+                assert(result == (a ^ b));
+            if (alu_opcode == ALU_SLL)
+                assert(result == (a << b[4:0]));
+            if (alu_opcode == ALU_SRL)
+                assert(result == (a >> b[4:0]));
+            if (alu_opcode == ALU_SRA)
+                assert(result == ($signed(a) >>> b[4:0]));
+            if (alu_opcode == ALU_SLT)
+                assert(
+                    result ==
+                    (($signed(a) < $signed(b)) ? 32'd1 : 32'd0)
+                );
+            if (alu_opcode == ALU_SLTU)
+                assert(
+                    result ==
+                    ((a < b) ? 32'd1 : 32'd0)
+                );
+            if ((alu_opcode == ALU_SLT) ||
+                (alu_opcode == ALU_SLTU)) begin
+                assert(
+                    (result == 32'd0) ||
+                    (result == 32'd1)
+                );
+            end
+            if (alu_opcode > ALU_SLTU)
+                assert(result == 32'h00000000);
+            if ((alu_opcode == ALU_ADD) && (b == 32'd0))
+                assert(result == a);
+            if ((alu_opcode == ALU_SUB) && (b == 32'd0))
+                assert(result == a);
+            if ((alu_opcode == ALU_XOR) && (a == b))
+                assert(result == 32'd0);
+            if ((alu_opcode == ALU_AND) && (a == b))
+                assert(result == a);
         end
-        if (alu_opcode > ALU_SLTU)
-            assert(result == 32'h00000000);
-        if ((alu_opcode == ALU_ADD) && (b == 32'd0))
-            assert(result == a);
-        if ((alu_opcode == ALU_SUB) && (b == 32'd0))
-            assert(result == a);
-        if ((alu_opcode == ALU_XOR) && (a == b))
-            assert(result == 32'd0);
-        if ((alu_opcode == ALU_AND) && (a == b))
-            assert(result == a);
-    end
-`endif
+    `endif
 endmodule

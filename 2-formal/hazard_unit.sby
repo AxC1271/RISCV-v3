@@ -1,0 +1,13 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc
+
+[script]
+read -formal -D FORMAL hazard_unit.sv
+prep -top hazard_unit
+
+[files]
+../0-rtl/hazard_unit.sv
