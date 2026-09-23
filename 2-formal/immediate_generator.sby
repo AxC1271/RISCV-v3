@@ -1,0 +1,13 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc
+
+[script]
+read -formal -D FORMAL immediate_generator.sv
+prep -top immediate_generator
+
+[files]
+../0-rtl/immediate_generator.sv
