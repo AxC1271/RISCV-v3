@@ -1,11 +1,11 @@
 read_verilog -sv ../0-rtl/alu.sv
+read_verilog -sv ../0-rtl/bimodal_predictor.sv
 read_verilog -sv ../0-rtl/branch_unit.sv
 read_verilog -sv ../0-rtl/control_unit.sv
-read_verilog -sv ../0-rtl/core_riscv_superscalar_FINAL.sv
+read_verilog -sv ../0-rtl/core_riscv_superscalar.sv
 read_verilog -sv ../0-rtl/dispatch_unit.sv
 read_verilog -sv ../0-rtl/exmem_stage.sv
 read_verilog -sv ../0-rtl/forward_unit.sv
-read_verilog -sv ../0-rtl/gshare_predictor.sv
 read_verilog -sv ../0-rtl/hazard_unit.sv
 read_verilog -sv ../0-rtl/idex_stage.sv
 read_verilog -sv ../0-rtl/ifid_stage.sv
@@ -14,9 +14,9 @@ read_verilog -sv ../0-rtl/memwb_stage.sv
 read_verilog -sv ../0-rtl/program_counter.sv
 read_verilog -sv ../0-rtl/register_file.sv
 
-hierarchy -check -top core_riscv_superscalar_FINAL
+hierarchy -check -top core_riscv_superscalar
 
-synth -top core_riscv_superscalar_FINAL
+synth -top core_riscv_superscalar
 
 opt -full
 opt_clean -purge
@@ -33,4 +33,4 @@ opt_clean -purge
 tee -o synth_stats_gshare.txt \
     stat -liberty sky130_fd_sc_hd__tt_025C_1v80.lib
 
-write_verilog -noattr -noexpr core_riscv_superscalar_gshare_synth.v
+write_verilog -noattr -noexpr core_riscv_superscalar_bimodal_synth.v
