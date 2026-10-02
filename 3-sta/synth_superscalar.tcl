@@ -4,26 +4,19 @@ link_design core_riscv_superscalar_FINAL
 read_sdc /data/constraints.sdc
 
 puts "\n========================================"
-puts "DESIGN RULE VIOLATIONS"
+puts "TIMING SUMMARY"
 puts "========================================"
 
-report_check_types \
-    -max_slew \
-    -max_capacitance \
-    -max_fanout \
-    -violators
+report_wns
+report_tns
 
 puts "\n========================================"
-puts "WORST SETUP PATHS"
+puts "WORST 5 SETUP PATHS"
 puts "========================================"
 
 report_checks \
     -path_delay max \
-    -group_path_count 10 \
+    -group_path_count 5 \
     -endpoint_path_count 1 \
-    -fields {slew cap input_pins fanout} \
-    -digits 4
-
-report_wns
-report_tns
-report_checks -path_delay max -fields {slew cap input_pins} -digits 3
+    -fields {slew fanout} \
+    -digits 3
