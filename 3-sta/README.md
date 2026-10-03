@@ -358,23 +358,14 @@ Reported min period:     11.10 ns
 Reported Fmax:           90.12 MHz
 ```
 
-The result demonstrates that the severe post-synthesis timing violations
-were primarily a physical implementation problem rather than an inherently
-long arithmetic datapath. Physical buffering, placement, clock-tree
-synthesis, and routing substantially improved the high-fanout control
-distribution.
-The 90.12 MHz value is OpenROAD's reported post-route minimum-period
-estimate. The implementation itself was optimized and closed against a
-17 ns (58.82 MHz) clock constraint; therefore, 58.82 MHz is the demonstrated
-implementation target, while 90.12 MHz represents estimated timing margin
-rather than a separately closed 90 MHz implementation.
+The result demonstrates that the severe post-synthesis timing violations were primarily a physical implementation problem rather than an inherently long arithmetic datapath. Physical buffering, placement, clock-tree synthesis, and routing substantially improved the high-fanout control distribution. The 90.12 MHz value is OpenROAD's reported post-route minimum-period
+estimate. The implementation itself was optimized and closed against a 17 ns (58.82 MHz) clock constraint; therefore, 58.82 MHz is the demonstrated implementation target, while 90.12 MHz represents estimated timing margin rather than a separately closed 90 MHz implementation.
 
 ---
 
 ## 7. Physical Verification
 
-The completed design was exported to GDSII and checked using the Sky130
-physical verification flow.
+The completed design was exported to GDSII and checked using the Sky130 physical verification flow.
 
 ```text
 Final design area:        226,415 µm²
@@ -385,12 +376,7 @@ KLayout DRC violations:         0
 LVS:               Netlists match
 ```
 
-Detailed routing initially encountered 26,216 routing violations. The
-router iteratively repaired these violations, followed by antenna-diode
-insertion and incremental rerouting, ultimately converging to zero
-detailed-routing and antenna violations.
-The final merged GDSII subsequently passed the Sky130 KLayout DRC with
-zero reported violations and LVS reported:
+Detailed routing initially encountered 26,216 routing violations. The router iteratively repaired these violations, followed by antenna-diode insertion and incremental rerouting, ultimately converging to zero detailed-routing and antenna violations. The final merged GDSII subsequently passed the Sky130 KLayout DRC with zero reported violations and LVS reported:
 
 ```
 Congratulations! Netlists match.
@@ -398,16 +384,9 @@ Congratulations! Netlists match.
 
 ---
 
-### Final Physical Layout
-
-![Final routed physical implementation](/3-sta/deliverables/imp_17ns/final_congestion.webp.png)
-
-Final Sky130HD physical implementation of the 2-way superscalar RV32I core
-after placement, CTS, detailed routing, antenna repair, and filler insertion.
-
 ### Detailed Routing
 
-![Final detailed routing](/3-sta/deliverables/imp_17ns/final_routing.webp.png)
+![Final detailed routing](/3-sta/deliverables/imp_17ns/final_all.webp.png)
 
 The routed core contains approximately 1.17 m of interconnect across the
 available metal stack and roughly 176k vias.
