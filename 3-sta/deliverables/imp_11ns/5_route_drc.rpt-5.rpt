@@ -1,0 +1,132 @@
+violation type: Metal Spacing
+	srcs: net:net4310
+	bbox = (497.1900, 284.1400) - (497.4050, 284.2400) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (497.1900, 284.6800) - (497.2700, 284.8800) on Layer met1
+violation type: Metal Spacing
+	srcs: net:_04175_ net:net3837
+	bbox = (500.0650, 286.6750) - (500.1800, 286.7550) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (547.2750, 284.6300) - (547.5350, 284.6800) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (551.8450, 284.6300) - (551.9900, 284.6800) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (560.2000, 300.9050) - (560.5200, 300.9400) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (560.2000, 300.9050) - (560.5800, 300.9400) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (560.2000, 300.9050) - (560.5800, 301.0000) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3928 net:net3835
+	bbox = (563.2400, 300.6150) - (563.3550, 300.8000) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3928 net:net3835
+	bbox = (563.2400, 300.6600) - (563.3550, 300.8000) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3928 net:net3835
+	bbox = (563.2400, 300.6850) - (563.3550, 300.8000) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3835 net:net213
+	bbox = (563.5600, 299.9800) - (563.6600, 300.1200) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3835 net:net213
+	bbox = (563.5600, 299.9800) - (563.6600, 300.8000) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3835 net:net213
+	bbox = (563.5600, 300.6150) - (563.6600, 300.8000) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3835 net:net213
+	bbox = (563.6450, 300.6150) - (563.6600, 300.8000) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net204 net:exmem.mem2_alu_result\[12\]
+	bbox = (564.4900, 292.0200) - (564.5700, 292.1150) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net204 net:exmem.mem2_alu_result\[12\]
+	bbox = (564.4900, 292.0200) - (564.6450, 292.1150) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (564.7350, 284.1400) - (564.9500, 284.2400) on Layer met1
+violation type: Metal Spacing
+	srcs: net:_04164_
+	bbox = (564.8100, 300.4600) - (565.0250, 300.5600) on Layer met1
+violation type: Metal Spacing
+	srcs: net:_04164_ net:net3837
+	bbox = (565.0250, 300.7200) - (565.1150, 300.7900) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (565.1150, 300.9500) - (565.3100, 301.0000) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (565.7300, 291.9600) - (565.9350, 292.0100) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net3837
+	bbox = (567.0250, 290.0700) - (567.1700, 290.1200) on Layer met1
+violation type: Metal Spacing
+	srcs: net:net4052
+	bbox = (570.9550, 303.1800) - (571.1600, 303.2450) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[17\]
+	bbox = (501.3850, 286.7200) - (501.6750, 286.8600) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[17\]
+	bbox = (501.3850, 286.7200) - (502.1600, 286.8600) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[17\]
+	bbox = (501.3850, 286.7200) - (502.1700, 286.8350) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[17\]
+	bbox = (502.0200, 286.7200) - (502.1600, 286.8600) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[17\]
+	bbox = (502.0200, 286.7200) - (502.1700, 286.8350) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[17\]
+	bbox = (502.0300, 286.7200) - (502.1600, 286.8600) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[17\]
+	bbox = (502.0300, 286.7200) - (502.1700, 286.8350) on Layer met1
+violation type: Short
+	srcs: net:net3837 net:net4307
+	bbox = (560.1450, 300.7650) - (560.4350, 300.7900) on Layer met1
+violation type: Short
+	srcs: net:net3837 net:net4307
+	bbox = (560.2100, 300.7650) - (560.3500, 300.7900) on Layer met1
+violation type: Short
+	srcs: net:net3837 net:_14940_
+	bbox = (561.5890, 292.1600) - (561.5910, 292.2400) on Layer met1
+violation type: Short
+	srcs: net:net3837 net:_14940_
+	bbox = (561.5900, 292.1600) - (561.7000, 292.2400) on Layer met1
+violation type: Short
+	srcs: net:net3837 net:_14940_
+	bbox = (561.5900, 292.1600) - (561.7300, 292.2400) on Layer met1
+violation type: Short
+	srcs: net:net3837 net:_14940_
+	bbox = (561.5900, 292.1600) - (561.8050, 292.2400) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[12\]
+	bbox = (563.0250, 292.1150) - (563.2400, 292.1900) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:exmem.mem2_alu_result\[12\]
+	bbox = (563.1000, 292.1150) - (563.2400, 292.1900) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:net3835
+	bbox = (563.4200, 300.3200) - (563.5600, 300.4600) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:net213
+	bbox = (563.6600, 300.3200) - (563.8000, 300.4600) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:net213
+	bbox = (563.7950, 300.3200) - (563.8000, 300.4600) on Layer met1
+violation type: Short
+	srcs: net:net3928 net:net3835
+	bbox = (498.3400, 286.6300) - (498.4800, 286.9500) on Layer met2
+violation type: Short
+	srcs: net:net3928 net:net3835
+	bbox = (498.3400, 286.7200) - (498.4800, 286.8600) on Layer met2
