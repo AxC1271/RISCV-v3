@@ -31,25 +31,37 @@ Representative workloads also showed improvements over the previous scalar v2 co
 
 ## Branch Predictor Evaluation
 
-Three predictors were evaluated:
-- Always Not-Taken
-- 512-entry 2-bit Bimodal
-- 10-bit-history Gshare with a 1024-entry 2-bit PHT
-| Benchmark | Metric | Not-Taken | Bimodal | Gshare |
-|---|---|---:|---:|---:|
-| Fibonacci | IPC | 0.9801 | **1.4752** | 1.2314 |
-| | Accuracy | 3.45% | **89.66%** | 55.17% |
-| Binary Search | IPC | 0.8529 | **0.8764** | 0.8512 |
-| | Accuracy | 72.20% | **78.03%** | 71.75% |
-| Insertion Sort | IPC | 0.8711 | **0.8862** | 0.8807 |
-| | Accuracy | 89.26% | **93.33%** | 91.48% |
-| GCD | IPC | 0.8267 | **0.8442** | 0.8380 |
-| | Accuracy | 75.16% | **77.74%** | 76.77% |
-| String Search | IPC | 0.9408 | 0.9461 | **0.9670** |
-| | Accuracy | 82.45% | 83.97% | **89.92%** |
+Three branch predictors were evaluated:
 
-Bimodal achieved higher IPC on four of five representative applications.
-Gshare performed better when useful global branch correlation existed. On a synthetic branch-correlation stress test, prediction accuracy was:
+- **Always Not-Taken**
+- **Bimodal:** 512-entry table of 2-bit saturating counters
+- **Gshare:** 10-bit global history with a 1024-entry table of 2-bit saturating counters
+
+| Benchmark | Predictor | IPC | Accuracy |
+|---|---|---:|---:|
+| **Fibonacci** | Not-Taken | 0.9801 | 3.45% |
+| | **Bimodal** | **1.4752** | **89.66%** |
+| | Gshare | 1.2314 | 55.17% |
+| **Binary Search** | Not-Taken | 0.8529 | 72.20% |
+| | **Bimodal** | **0.8764** | **78.03%** |
+| | Gshare | 0.8512 | 71.75% |
+| **Insertion Sort** | Not-Taken | 0.8711 | 89.26% |
+| | **Bimodal** | **0.8862** | **93.33%** |
+| | Gshare | 0.8807 | 91.48% |
+| **GCD** | Not-Taken | 0.8267 | 75.16% |
+| | **Bimodal** | **0.8442** | **77.74%** |
+| | Gshare | 0.8380 | 76.77% |
+| **String Search** | Not-Taken | 0.9408 | 82.45% |
+| | Bimodal | 0.9461 | 83.97% |
+| | **Gshare** | **0.9670** | **89.92%** |
+
+Bimodal achieved both the highest prediction accuracy and the highest IPC
+on four of the five representative application workloads. Gshare performed
+best on String Search, where global branch history provided useful
+correlation.
+
+The advantage of Gshare became more apparent on a synthetic workload
+designed to stress correlated branch behavior:
 
 ```text
 Gshare:       88.75%
@@ -57,7 +69,17 @@ Bimodal:      71.46%
 Not-Taken:    27.29%
 ```
 
-However, synthesis showed that the additional Gshare state was expensive when implemented entirely from standard cells.
+This illustrates the intended strength of Gshare: incorporating global
+branch history allows it to exploit correlations between branches that a
+PC-indexed Bimodal predictor cannot capture.
+For the final processor, I selected Bimodal. On the representative
+application workloads evaluated here, its simpler PC-indexed predictor
+provided the best accuracy and IPC in four of five cases. Although Gshare
+was substantially better on the synthetic correlation test, that advantage
+did not translate into better performance on most of the application
+workloads evaluated for this project. Given these results and Bimodal's
+simpler hardware structure, Bimodal was used for the final physical
+implementation.
 
 ---
 
@@ -378,21 +400,21 @@ Congratulations! Netlists match.
 
 ### Final Physical Layout
 
-![Final routed physical implementation](deliverables/final_congestion.webp.png)
+![Final routed physical implementation](deliverables/imp_17ns/final_congestion.webp.png)
 
 Final Sky130HD physical implementation of the 2-way superscalar RV32I core
 after placement, CTS, detailed routing, antenna repair, and filler insertion.
 
 ### Detailed Routing
 
-![Final detailed routing](deliverables/final_routing.webp.png)
+![Final detailed routing](deliverables/imp_17ns/final_routing.webp.png)
 
 The routed core contains approximately 1.17 m of interconnect across the
 available metal stack and roughly 176k vias.
 
 ### Clock Tree
 
-![Clock-tree distribution](/3-sta/deliverables/cts_default_clk_layout.webp.png)
+![Clock-tree distribution](/3-sta/deliverables/imp_17ns/cts_default_clk_layout.webp.png)
 
 Clock-tree synthesis physically distributes the clock across the sequential
 state of the processor, inserting and balancing clock buffers to control
@@ -400,17 +422,22 @@ slew and skew.
 
 ### Post-Route Critical Path
 
-![Post-route worst timing path](deliverables/final_worst_path.webp.png)
+![Post-route worst timing path](deliverables/imp_17ns/final_worst_path.webp.png)
 
 ---
 
 # Conclusions
 The v3 implementation demonstrates why processor structures should be evaluated using both architectural performance and physical implementation cost.
+
 Gshare provided better prediction on workloads with useful global branch correlation, but Bimodal achieved higher IPC on four of five representative applications while requiring substantially less hardware. The standard-cell Gshare implementation consumed approximately 45.5% of total synthesized area and generated severe high-fanout timing paths.
+
 Switching to Bimodal reduced core area from approximately 0.238 mm² to 0.184 mm² and shifted the critical timing problem away from the predictor toward global pipeline-control distribution.
 Unlike v2, v3 is therefore carried through the complete OpenROAD physical-design flow. The final post-route analysis will determine whether physical buffering, placement, clock-tree synthesis, and routing can recover the severe high-fanout timing penalties observed in standalone OpenSTA.
+
 Ultimately, superscalar performance must account for both IPC and achievable clock frequency:
+
 ```text
 Instruction throughput ≈ IPC × clock frequency
 ```
+
 The final physical timing result therefore determines whether the IPC gains of the 2-way architecture translate into higher overall processor throughput.
