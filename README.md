@@ -267,7 +267,7 @@ DRC / LVS
 GDSII
 ```
 
-The original implementation target was **17 ns (58.82 MHz)**. The completed post-route design closed that target with no setup or hold violations.
+The original implementation target was **17 ns (58.82 MHz)**. The completed post-route design closed that target with no setup or hold violations. On the second run, the implementation target became **11 ns (90.0 MHz)**, which also completed post-route design with no setup or hold times.
 
 | Metric | Final 17 ns Implementation |
 |---|---:|
@@ -281,7 +281,18 @@ The original implementation target was **17 ns (58.82 MHz)**. The completed post
 | KLayout DRC violations | 0 |
 | LVS | Match |
 
-The **90.12 MHz** value is the minimum-period estimate reported from the completed 17 ns post-route implementation. It should not be interpreted as a separately timing-closed 90.12 MHz implementation.
+| Metric | Final 11 ns Implementation |
+|---|---:|
+| Final design area | 0.2266 mm² |
+| Target clock period | 11.0 ns |
+| Setup violations | 0 |
+| Hold violations | 0 |
+| Timing-closed frequency | 90.91 MHz |
+| Worst setup slack | +0.95 ns |
+| Reported minimum period | 10.05 ns |
+| Reported Fmax estimate | 99.45 MHz |
+| KLayout DRC violations | 0 |
+| LVS | Match |
 
 The detailed synthesis, STA, placement, CTS, routing, extraction, and signoff results live under [`3-sta/`](./3-sta/).
 
