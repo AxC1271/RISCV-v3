@@ -400,14 +400,14 @@ Congratulations! Netlists match.
 
 ### Final Physical Layout
 
-![Final routed physical implementation](deliverables/imp_17ns/final_congestion.webp.png)
+![Final routed physical implementation](/3-sta/deliverables/imp_17ns/final_congestion.webp.png)
 
 Final Sky130HD physical implementation of the 2-way superscalar RV32I core
 after placement, CTS, detailed routing, antenna repair, and filler insertion.
 
 ### Detailed Routing
 
-![Final detailed routing](deliverables/imp_17ns/final_routing.webp.png)
+![Final detailed routing](/3-sta/deliverables/imp_17ns/final_routing.webp.png)
 
 The routed core contains approximately 1.17 m of interconnect across the
 available metal stack and roughly 176k vias.
@@ -420,7 +420,7 @@ Clock-tree synthesis physically distributes the clock across the sequential stat
 
 ### Post-Route Critical Path
 
-![Post-route worst timing path](deliverables/imp_17ns/final_worst_path.webp.png)
+![Post-route worst timing path](/3-sta/deliverables/imp_17ns/final_worst_path.webp.png)
 
 ---
 
