@@ -1,2 +1,4 @@
 *.v
+*.png
 3-sta/OpenROAD-flow-scripts/
+.DS_Store

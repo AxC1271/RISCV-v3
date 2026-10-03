@@ -1,5 +1,10 @@
 # RV32I 2-Way Superscalar Processor with Branch Prediction
 
+<div align="center">
+    <img src="./rv32i_v3_microarchitecture_rectangles.png" />
+</div>
+
+
 A 2-way in-order superscalar RISC-V processor designed to explore instruction-level parallelism, data forwarding, and branch prediction. This project builds on my previous single-issue RV32I processor and focuses on both the performance potential and the additional architectural complexity introduced by widening the pipeline.
 
 ## Motivation: Breaking the Single-Issue IPC Ceiling
