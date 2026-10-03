@@ -386,20 +386,20 @@ Congratulations! Netlists match.
 
 ### Detailed Routing
 
-![Final detailed routing](/3-sta/deliverables/imp_17ns/final_all.webp.png)
+![Final detailed routing](/2-sta/deliverables/imp_17ns/final_all.webp.png)
 
 The routed core contains approximately 1.17 m of interconnect across the
 available metal stack and roughly 176k vias.
 
 ### Clock Tree
 
-![Clock-tree distribution](/3-sta/deliverables/imp_17ns/cts_default_clk_layout.webp.png)
+![Clock-tree distribution](/2-sta/deliverables/imp_17ns/cts_default_clk_layout.webp.png)
 
 Clock-tree synthesis physically distributes the clock across the sequential state of the processor, inserting and balancing clock buffers to control slew and skew.
 
 ### Post-Route Critical Path
 
-![Post-route worst timing path](/3-sta/deliverables/imp_17ns/final_worst_path.webp.png)
+![Post-route worst timing path](/2-sta/deliverables/imp_17ns/final_worst_path.webp.png)
 
 ---
 
