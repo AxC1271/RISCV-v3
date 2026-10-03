@@ -20,12 +20,6 @@ module register_file (
     input  logic       reg1_write,
     input  logic       reg2_write
 );
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     // define the same 32 architectural registers
     logic[31:0] registers [0:31];
     logic bypass_wr1_rd1_1, bypass_wr1_rd1_2; 
@@ -85,10 +79,4 @@ module register_file (
                     bypass_wr1_rd2_2 ? wr1_data :
                     bypass_wr2_rd2_2 ? wr2_data :
                     registers[rd2_addr2];
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
-
 endmodule

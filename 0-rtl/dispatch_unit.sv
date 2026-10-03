@@ -13,13 +13,6 @@ module dispatch_unit (
     output logic issue_1,       // 1 = instr_1 proceeds
     output logic stall_pipeline // 1 = stall entire pipeline
 );
-
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     assign issue_0 = !load_use;
     assign issue_1 = !(
         load_use          || 
@@ -32,11 +25,4 @@ module dispatch_unit (
         control_in_slot1
     );
     assign stall_pipeline = load_use;
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
-
 endmodule

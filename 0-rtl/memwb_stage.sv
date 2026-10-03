@@ -34,13 +34,6 @@ module memwb_stage (
     output logic        wb2_ebreak,
     output logic        wb2_valid
 );
-
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     always_ff @(posedge clk) begin
         if (!rst_n) begin
             wb1_alu_result <= 32'h0;
@@ -78,12 +71,4 @@ module memwb_stage (
             wb2_valid      <= mem2_valid;
         end
     end
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
-
-
 endmodule

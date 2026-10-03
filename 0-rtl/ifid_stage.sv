@@ -25,13 +25,6 @@ module ifid_stage (
     output logic       id2_predicted_taken,
     output logic[9:0]  id2_branch_history
 );
-
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     always_ff @(posedge clk) begin
         if (!rst_n || flush) begin
             id1_pc    <= 32'h0;
@@ -70,11 +63,4 @@ module ifid_stage (
             id2_branch_history <= if2_branch_history;
         end
     end
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
-
 endmodule

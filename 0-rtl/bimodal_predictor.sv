@@ -12,12 +12,6 @@ module bimodal_predictor (
     input  logic       branch_valid
 );
 
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     // branch predictor scheme is defined as a 2-bit saturating
     // counter. 00 means strongly not taken, 01 means weakly not taken,
     // 10 means weakly taken, and 11 means strongly taken
@@ -44,11 +38,5 @@ module bimodal_predictor (
                 bht[wr_idx] <= bht[wr_idx] - 2'b01;
         end
     end
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
 
 endmodule

@@ -21,12 +21,6 @@ module core_riscv_superscalar (
     output logic        debug_halted
 );
 
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     logic[31:0] pc_curr, pc_next;
     logic flush;
     logic pc_write;
@@ -531,11 +525,5 @@ module core_riscv_superscalar (
     assign debug_instr = wb1_valid ? 32'h00000013 : id1_instr;
     assign debug_reg_data = wb1_data;
     assign debug_halted = (wb1_valid && wb1_ebreak) || (wb2_valid && wb2_ebreak);
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
 
 endmodule

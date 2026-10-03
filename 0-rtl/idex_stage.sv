@@ -98,13 +98,6 @@ module idex_stage (
     output logic       ex2_predicted_taken,
     output logic[9:0]  ex2_branch_history
 );
-
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     always_ff @(posedge clk) begin
         if (!rst_n || flush) begin
             // if it's not valid it just
@@ -167,11 +160,4 @@ module idex_stage (
             ex2_branch_history <= id2_branch_history;
         end
     end
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
-
 endmodule

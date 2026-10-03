@@ -28,12 +28,6 @@ module forward_unit (
 
 );
 
-    /*
-        1. All of my RTL logic lives here
-        2. All combinational/registered logic are defined here
-        3. Use these during testbenches/simulations 
-        */
-
     // 3'b000 = no forwarding
     // 3'b001 = WB1
     // 3'b010 = WB2
@@ -123,11 +117,4 @@ module forward_unit (
             forward_2b = 3'b010;
 
     end
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-     */
-
 endmodule

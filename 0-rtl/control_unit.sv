@@ -16,12 +16,6 @@ module control_unit (
     output logic      ebreak
 );
 
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     localparam OP_R_TYPE  = 7'b0110011;
     localparam OP_I_ARITH = 7'b0010011;
     localparam OP_LOAD    = 7'b0000011;
@@ -165,11 +159,4 @@ module control_unit (
             end
         endcase
     end
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
-    
 endmodule

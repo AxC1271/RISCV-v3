@@ -212,8 +212,6 @@ The core detects the misprediction in EX, computes the correct next PC, flushes 
 
 # Verification
 
-Verification is split between directed simulation and formal properties.
-
 The main directed regression exercises arithmetic, hazards, forwarding, branches, memory operations, and superscalar execution:
 
 ```text
@@ -227,17 +225,6 @@ IPC     = 0.9024
 
 Separate workload testbenches are used for performance characterization rather than basic instruction correctness.
 
-Formal verification uses SystemVerilog Assertions and SymbiYosys to check architectural invariants such as:
-
-- `x0` always remains zero
-- Invalid pipeline entries cannot commit register writes
-- Invalid instructions cannot perform memory writes
-- Pipeline flushes prevent wrong-path instructions from committing
-- Register writes only target valid destination registers
-- In-order architectural behavior is preserved
-- Hazard logic prevents unresolved dependencies from executing incorrectly
-
-High IPC is only useful if the resulting architectural state is still correct.
 
 ---
 
@@ -330,8 +317,7 @@ Then, I was able to derive this diagram using the `.odb`, `.def`, and the synthe
 ```text
 /0-rtl/    - SystemVerilog implementation of the processor
 /1-sim/    - directed tests, workloads, and IPC/predictor benchmarks
-/2-formal/ - SystemVerilog assertions and SymbiYosys scripts
-/3-sta/    - synthesis, STA, OpenROAD physical implementation, and signoff results
+/2-sta/    - synthesis, STA, OpenROAD physical implementation, and signoff results
 ```
 
 ---

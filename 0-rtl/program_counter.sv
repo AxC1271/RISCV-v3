@@ -7,13 +7,6 @@ module program_counter # (
     input  logic[31:0] pc_in,
     output logic[31:0] pc_out
 );
-
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
-
     always_ff @(posedge clk) begin
         if (!rst_n) begin
             pc_out <= RESET_VECTOR;
@@ -21,11 +14,4 @@ module program_counter # (
             pc_out <= pc_in;
         end
     end
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
-
 endmodule

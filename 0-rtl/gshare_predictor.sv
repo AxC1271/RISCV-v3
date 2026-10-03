@@ -13,12 +13,6 @@ module gshare_predictor (
     input  logic       branch_valid,
     output logic[9:0]  global_history_next
 );
-
-    /*
-    1. All of my RTL logic lives here
-    2. All combinational/registered logic are defined here
-    3. Use these during testbenches/simulations 
-    */
     
     logic[1:0] pht [0:1023];
     logic[9:0] pht_rd_idx, pht_rd_idx2, pht_wr_idx;
@@ -46,11 +40,4 @@ module gshare_predictor (
     end
 
     assign global_history_next = {global_history[8:0], branch_taken};
-
-    /*
-    1. My formal properties live here
-    2. All asserts, assumes, and covers are defined here
-    3. Use these during SymbiYosys for formal verification
-    */
-
 endmodule
