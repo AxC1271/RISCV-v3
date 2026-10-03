@@ -416,9 +416,7 @@ available metal stack and roughly 176k vias.
 
 ![Clock-tree distribution](/3-sta/deliverables/imp_17ns/cts_default_clk_layout.webp.png)
 
-Clock-tree synthesis physically distributes the clock across the sequential
-state of the processor, inserting and balancing clock buffers to control
-slew and skew.
+Clock-tree synthesis physically distributes the clock across the sequential state of the processor, inserting and balancing clock buffers to control slew and skew.
 
 ### Post-Route Critical Path
 
