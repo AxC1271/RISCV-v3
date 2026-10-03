@@ -1,3 +1,4 @@
 *.v
 2-sta/OpenROAD-flow-scripts/
 .DS_Store
+*.lvsdb
